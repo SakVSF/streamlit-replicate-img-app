@@ -7,11 +7,11 @@ from utils import icon
 from streamlit_image_select import image_select
 
 # UI configurations
-st.set_page_config(page_title="Replicate Image Generator",
+st.set_page_config(page_title="Neural Style Transfer",
                    page_icon=":bridge_at_night:",
                    layout="wide")
-icon.show_icon(":foggy:")
-st.markdown("# :rainbow[Text-to-Image Artistry Studio]")
+icon.show_icon()
+st.markdown("# :rainbow[Automating Visual Artistry]")
 
 # API Tokens and endpoints from `.streamlit/secrets.toml` file
 REPLICATE_API_TOKEN = st.secrets["REPLICATE_API_TOKEN"]
@@ -25,6 +25,71 @@ replicate_logo = "https://storage.googleapis.com/llama2_release/Screen%20Shot%20
 # Placeholders for images and gallery
 generated_images_placeholder = st.empty()
 gallery_placeholder = st.empty()
+def show_icon():
+    """Shows a gallery button."""
+
+    st.markdown("""
+    <style>
+    .gallery-button {
+        padding: 0.5rem 1rem;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<button onclick="show_gallery()" class="gallery-button">Gallery</button>', unsafe_allow_html=True)
+
+    st.markdown('<script>function show_gallery() {window.location.href = "#gallery";}</script>', unsafe_allow_html=True)
+
+def show_navbar():
+    # Navigation bar with a gallery button
+    st.markdown("""
+    <style>
+    .navbar {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 1rem;
+        background-color: #f0f0f0;
+    }
+    .gallery-button {
+        padding: 0.5rem 1rem;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<a href="#gallery" class="gallery-button">Gallery</a>', unsafe_allow_html=True)
+
+
+def show_gallery():
+    # Display the gallery
+    st.markdown("<h2 id='gallery'>Gallery</h2>", unsafe_allow_html=True)
+    img = image_select(
+        label="Like what you see? Right-click and save! It's not stealing if we're sharing! 😉",
+        images=[
+            "gallery/farmer_sunset.png", "gallery/astro_on_unicorn.png",
+            "gallery/friends.png", "gallery/wizard.png", "gallery/puppy.png",
+            "gallery/cheetah.png", "gallery/viking.png",
+        ],
+        captions=["A farmer tilling a farm with a tractor during sunset, cinematic, dramatic",
+                  "An astronaut riding a rainbow unicorn, cinematic, dramatic",
+                  "A group of friends laughing and dancing at a music festival, joyful atmosphere, 35mm film photography",
+                  "A wizard casting a spell, intense magical energy glowing from his hands, extremely detailed fantasy illustration",
+                  "A cute puppy playing in a field of flowers, shallow depth of field, Canon photography",
+                  "A cheetah mother nurses her cubs in the tall grass of the Serengeti. The early morning sun beams down through the grass. National Geographic photography by Frans Lanting",
+                  "A close-up portrait of a bearded viking warrior in a horned helmet. He stares intensely into the distance while holding a battle axe. Dramatic mood lighting, digital oil painting",
+                  ],
+        use_container_width=True
+    )
 
 
 def configure_sidebar() -> None:
@@ -36,8 +101,8 @@ def configure_sidebar() -> None:
     """
     with st.sidebar:
         with st.form("my_form"):
-            st.info("**Yo fam! Start here ↓**", icon="👋🏾")
-            with st.expander(":rainbow[**Refine your output here**]"):
+            st.info("**Hello! Start here ↓**", icon="👋🏾")
+            with st.expander(":rainbow[**Choose your model here**]"):
                 # Advanced Settings (for the curious minds!)
                 width = st.number_input("Width of output image", value=1024)
                 height = st.number_input("Height of output image", value=1024)
@@ -55,37 +120,21 @@ def configure_sidebar() -> None:
                     "Select refine style to use (left out the other 2)", ("expert_ensemble_refiner", "None"))
                 high_noise_frac = st.slider(
                     "Fraction of noise to use for `expert_ensemble_refiner`", value=0.8, max_value=1.0, step=0.1)
-            prompt = st.text_area(
-                ":orange[**Enter prompt: start typing, Shakespeare ✍🏾**]",
-                value="An astronaut riding a rainbow unicorn, cinematic, dramatic")
-            negative_prompt = st.text_area(":orange[**Party poopers you don't want in image? 🙅🏽‍♂️**]",
-                                           value="the absolute worst quality, distorted features",
-                                           help="This is a negative prompt, basically type what you don't want to see in the generated image")
+                
+                #TODO: create dropdown of the models 
 
+            #TODO : 
+            
+
+            uploaded_image1 = st.file_uploader("Upload Image 1", type=["jpg", "jpeg", "png"])
+            uploaded_image2 = st.file_uploader("Upload Image 2", type=["jpg", "jpeg", "png"])
             # The Big Red "Submit" Button!
             submitted = st.form_submit_button(
                 "Submit", type="primary", use_container_width=True)
 
-        # Credits and resources
-        st.divider()
-        st.markdown(
-            ":orange[**Resources:**]  \n"
-            f"<img src='{replicate_logo}' style='height: 1em'> [{replicate_text}]({replicate_link})",
-            unsafe_allow_html=True
-        )
-        st.markdown(
-            """
-            ---
-            Follow me on:
+    
 
-            𝕏 → [@tonykipkemboi](https://twitter.com/tonykipkemboi)
-
-            LinkedIn → [Tony Kipkemboi](https://www.linkedin.com/in/tonykipkemboi)
-
-            """
-        )
-
-        return submitted, width, height, num_outputs, scheduler, num_inference_steps, guidance_scale, prompt_strength, refine, high_noise_frac, prompt, negative_prompt
+        return submitted, width, height, num_outputs, scheduler, num_inference_steps, guidance_scale, prompt_strength, refine, high_noise_frac, uploaded_image1, uploaded_image2
 
 
 def main_page(submitted: bool, width: int, height: int, num_outputs: int,
@@ -182,7 +231,7 @@ def main_page(submitted: bool, width: int, height: int, num_outputs: int,
     # Gallery display for inspo
     with gallery_placeholder.container():
         img = image_select(
-            label="Like what you see? Right-click and save! It's not stealing if we're sharing! 😉",
+            label="Like what you see? Select the image to save to your gallery to view your masterpieces later! 😉",
             images=[
                 "gallery/farmer_sunset.png", "gallery/astro_on_unicorn.png",
                 "gallery/friends.png", "gallery/wizard.png", "gallery/puppy.png",
