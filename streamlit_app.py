@@ -235,21 +235,36 @@ def main_page(submitted: bool,style: str, prompt: str) -> None:
 
     # Gallery display for inspo
     with gallery_placeholder.container():
+        save_folder = 'C:/Users/Saakshi Saraf/Downloads/test'
+
+
+        paths = []
+        sorted_image_paths = []
+        # Iterate over all files in the folder
+        for file_path in Path(save_folder).iterdir():
+            # Check if the file is an image file
+            if file_path.suffix.lower() in ['.jpg', '.jpeg', '.png']:
+                paths.append((file_path, file_path.stat().st_mtime))  # 
+
+        sorted_image_paths = sorted(paths, key=lambda x: x[1], reverse=True)
+        image_paths =[]
+        image_paths= [str(file_path) for file_path, _ in sorted_image_paths]
+    
         img = image_select(
             label="Like what you see? Select the image to save to your gallery to view your masterpieces later! 😉",
-            images=[
-                "gallery/farmer_sunset.png", "gallery/astro_on_unicorn.png",
-                "gallery/friends.png", "gallery/wizard.png", "gallery/puppy.png",
-                "gallery/cheetah.png", "gallery/viking.png",
-            ],
-            captions=["A farmer tilling a farm with a tractor during sunset, cinematic, dramatic",
-                      "An astronaut riding a rainbow unicorn, cinematic, dramatic",
-                      "A group of friends laughing and dancing at a music festival, joyful atmosphere, 35mm film photography",
-                      "A wizard casting a spell, intense magical energy glowing from his hands, extremely detailed fantasy illustration",
-                      "A cute puppy playing in a field of flowers, shallow depth of field, Canon photography",
-                      "A cheetah mother nurses her cubs in the tall grass of the Serengeti. The early morning sun beams down through the grass. National Geographic photography by Frans Lanting",
-                      "A close-up portrait of a bearded viking warrior in a horned helmet. He stares intensely into the distance while holding a battle axe. Dramatic mood lighting, digital oil painting",
-                      ],
+            images=image_paths,
+               # "gallery/farmer_sunset.png", "gallery/astro_on_unicorn.png",
+               # "gallery/friends.png", "gallery/wizard.png", "gallery/puppy.png",
+                #"gallery/cheetah.png", "gallery/viking.png",
+           # ],
+            #captions=["A farmer tilling a farm with a tractor during sunset, cinematic, dramatic",
+                 #     "An astronaut riding a rainbow unicorn, cinematic, dramatic",
+                    #  "A group of friends laughing and dancing at a music festival, joyful atmosphere, 35mm film photography",
+                    #  "A wizard casting a spell, intense magical energy glowing from his hands, extremely detailed fantasy illustration",
+                     # "A cute puppy playing in a field of flowers, shallow depth of field, Canon photography",
+                     # "A cheetah mother nurses her cubs in the tall grass of the Serengeti. The early morning sun beams down through the grass. National Geographic photography by Frans Lanting",
+                     # "A close-up portrait of a bearded viking warrior in a horned helmet. He stares intensely into the distance while holding a battle axe. Dramatic mood lighting, digital oil painting",
+                     # ],
             use_container_width=True
         )
 
