@@ -1,28 +1,18 @@
-import replicate
 import streamlit as st
 import requests
 import zipfile
 import io
 from utils import icon
-from streamlit_image_select import image_select
 from pathlib import Path
 import os
+from PIL import Image
+
 # UI configurations
 st.set_page_config(page_title="Neural Style Transfer",
                    page_icon=":bridge_at_night:",
                    layout="wide")
 icon.show_icon()
 st.markdown("# :rainbow[Automating Visual Artistry]")
-
-# API Tokens and endpoints from `.streamlit/secrets.toml` file
-REPLICATE_API_TOKEN = st.secrets["REPLICATE_API_TOKEN"]
-REPLICATE_MODEL_ENDPOINTSTABILITY = st.secrets["REPLICATE_MODEL_ENDPOINTSTABILITY"]
-
-# Resources text, link, and logo
-replicate_text = "Stability AI SDXL Model on Replicate"
-replicate_link = "https://replicate.com/stability-ai/sdxl"
-replicate_logo = "https://storage.googleapis.com/llama2_release/Screen%20Shot%202023-07-21%20at%2012.34.05%20PM.png"
-
 # Placeholders for images and gallery
 generated_images_placeholder = st.empty()
 gallery_placeholder = st.empty()
@@ -74,23 +64,7 @@ def show_navbar():
 def show_gallery():
     # Display the gallery
     st.markdown("<h2 id='gallery'>Gallery</h2>", unsafe_allow_html=True)
-    img = image_select(
-        label="Like what you see? Right-click and save! It's not stealing if we're sharing! 😉",
-        images=[
-            "gallery/farmer_sunset.png", "gallery/astro_on_unicorn.png",
-            "gallery/friends.png", "gallery/wizard.png", "gallery/puppy.png",
-            "gallery/cheetah.png", "gallery/viking.png",
-        ],
-        captions=["A farmer tilling a farm with a tractor during sunset, cinematic, dramatic",
-                  "An astronaut riding a rainbow unicorn, cinematic, dramatic",
-                  "A group of friends laughing and dancing at a music festival, joyful atmosphere, 35mm film photography",
-                  "A wizard casting a spell, intense magical energy glowing from his hands, extremely detailed fantasy illustration",
-                  "A cute puppy playing in a field of flowers, shallow depth of field, Canon photography",
-                  "A cheetah mother nurses her cubs in the tall grass of the Serengeti. The early morning sun beams down through the grass. National Geographic photography by Frans Lanting",
-                  "A close-up portrait of a bearded viking warrior in a horned helmet. He stares intensely into the distance while holding a battle axe. Dramatic mood lighting, digital oil painting",
-                  ],
-        use_container_width=True
-    )
+
 
 
 def configure_sidebar() -> None:
@@ -168,8 +142,6 @@ def main_page(submitted: bool, width: int, height: int, num_outputs: int,
         negative_prompt (str): Text prompt for elements to avoid in the image.
     """
     if submitted:
-      
-
         with st.status('👩🏾‍🍳 Whipping up your words into art...', expanded=True) as status:
             st.write("⚙️ Model initiated")
             st.write("🙆‍♀️ Stand up and strecth in the meantime")
@@ -179,21 +151,23 @@ def main_page(submitted: bool, width: int, height: int, num_outputs: int,
                     # Calling the replicate API to get the image
                     with generated_images_placeholder.container():
                         all_images = []  # List to store all generated images
-                        output = replicate.run(
-                            REPLICATE_MODEL_ENDPOINTSTABILITY,
-                            input={
-                                "prompt": prompt,
-                                "width": width,
-                                "height": height,
-                                "num_outputs": num_outputs,
-                                "scheduler": scheduler,
-                                "num_inference_steps": num_inference_steps,
-                                "guidance_scale": guidance_scale,
-                                "prompt_stregth": prompt_strength,
-                                "refine": refine,
-                                "high_noise_frac": high_noise_frac
-                            }
-                        )
+                        # output = replicate.run(
+                        #     REPLICATE_MODEL_ENDPOINTSTABILITY,
+                        #     input={
+                        #         "prompt": prompt,
+                        #         "width": width,
+                        #         "height": height,
+                        #         "num_outputs": num_outputs,
+                        #         "scheduler": scheduler,
+                        #         "num_inference_steps": num_inference_steps,
+                        #         "guidance_scale": guidance_scale,
+                        #         "prompt_stregth": prompt_strength,
+                        #         "refine": refine,
+                        #         "high_noise_frac": high_noise_frac
+                        #     }
+                        # )
+                        output = img = Image.open("image.jpg")
+
                         if output:
                             st.toast(
                                 'Your image has been generated!', icon='😍')
@@ -240,25 +214,8 @@ def main_page(submitted: bool, width: int, height: int, num_outputs: int,
     else:
         pass
 
-    # Gallery display for inspo
-    with gallery_placeholder.container():
-        img = image_select(
-            label="Like what you see? Select the image to save to your gallery to view your masterpieces later! 😉",
-            images=[
-                "gallery/farmer_sunset.png", "gallery/astro_on_unicorn.png",
-                "gallery/friends.png", "gallery/wizard.png", "gallery/puppy.png",
-                "gallery/cheetah.png", "gallery/viking.png",
-            ],
-            captions=["A farmer tilling a farm with a tractor during sunset, cinematic, dramatic",
-                      "An astronaut riding a rainbow unicorn, cinematic, dramatic",
-                      "A group of friends laughing and dancing at a music festival, joyful atmosphere, 35mm film photography",
-                      "A wizard casting a spell, intense magical energy glowing from his hands, extremely detailed fantasy illustration",
-                      "A cute puppy playing in a field of flowers, shallow depth of field, Canon photography",
-                      "A cheetah mother nurses her cubs in the tall grass of the Serengeti. The early morning sun beams down through the grass. National Geographic photography by Frans Lanting",
-                      "A close-up portrait of a bearded viking warrior in a horned helmet. He stares intensely into the distance while holding a battle axe. Dramatic mood lighting, digital oil painting",
-                      ],
-            use_container_width=True
-        )
+
+
 
 
 def main():
