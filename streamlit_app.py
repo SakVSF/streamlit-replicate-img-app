@@ -105,22 +105,22 @@ def configure_sidebar() -> None:
         st.info("**Hello! Start here ↓**", icon="👋🏾")
         with st.expander(":rainbow[**Choose your model here**]"):
             # Advanced Settings (for the curious minds!)
-            width = st.number_input("Width of output image", value=1024)
-            height = st.number_input("Height of output image", value=1024)
-            num_outputs = st.slider(
-                "Number of images to output", value=1, min_value=1, max_value=4)
-            scheduler = st.selectbox('Scheduler', ('DDIM', 'DPMSolverMultistep', 'HeunDiscrete',
-                                                    'KarrasDPM', 'K_EULER_ANCESTRAL', 'K_EULER', 'PNDM'))
-            num_inference_steps = st.slider(
-                "Number of denoising steps", value=50, min_value=1, max_value=500)
-            guidance_scale = st.slider(
-                "Scale for classifier-free guidance", value=7.5, min_value=1.0, max_value=50.0, step=0.1)
-            prompt_strength = st.slider(
-                "Prompt strength when using img2img/inpaint(1.0 corresponds to full destruction of infomation in image)", value=0.8, max_value=1.0, step=0.1)
-            refine = st.selectbox(
-                "Select refine style to use (left out the other 2)", ("expert_ensemble_refiner", "None"))
-            high_noise_frac = st.slider(
-                "Fraction of noise to use for `expert_ensemble_refiner`", value=0.8, max_value=1.0, step=0.1)
+           # width = st.number_input("Width of output image", value=1024)
+           # height = st.number_input("Height of output image", value=1024)
+           # num_outputs = st.slider(
+             #   "Number of images to output", value=1, min_value=1, max_value=4)
+            style = st.selectbox('style', ('Mosaic', 'VanGogh', 'Picasso',
+                                                    'GAN-1', 'Gan-2', 'GAN-3', 'GAN-4', 'GAN-5'))
+            #num_inference_steps = st.slider(
+              #  "Number of denoising steps", value=50, min_value=1, max_value=500)
+           # guidance_scale = st.slider(
+           #     "Scale for classifier-free guidance", value=7.5, min_value=1.0, max_value=50.0, step=0.1)
+           # prompt_strength = st.slider(
+               # "Prompt strength when using img2img/inpaint(1.0 corresponds to full destruction of infomation in image)", value=0.8, max_value=1.0, step=0.1)
+           # refine = st.selectbox(
+              #  "Select refine style to use (left out the other 2)", ("expert_ensemble_refiner", "None"))
+           # high_noise_frac = st.slider(
+              #  "Fraction of noise to use for `expert_ensemble_refiner`", value=0.8, max_value=1.0, step=0.1)
             
             #TODO: create dropdown of the models 
 
@@ -147,31 +147,19 @@ def configure_sidebar() -> None:
 
             
 
-        #return submitted, width, height, num_outputs, scheduler, num_inference_steps, guidance_scale, prompt_strength, refine, high_noise_frac, uploaded_image1, uploaded_image2
-        main_page(submitted, width, height, num_outputs, scheduler, num_inference_steps,
-              guidance_scale, prompt_strength, refine, high_noise_frac, uploaded_image1)
+        #return submitted, width, height, num_outputs, style, num_inference_steps, guidance_scale, prompt_strength, refine, high_noise_frac, uploaded_image1, uploaded_image2
+        #main_page(submitted, width, height, num_outputs, style, num_inference_steps,
+             # guidance_scale, prompt_strength, refine, high_noise_frac, uploaded_image1)
+        main_page(submitted,  style, uploaded_image1)
 
 
-def main_page(submitted: bool, width: int, height: int, num_outputs: int,
-              scheduler: str, num_inference_steps: int, guidance_scale: float,
-              prompt_strength: float, refine: str, high_noise_frac: float,
-              prompt: str) -> None:
-    """Main page layout and logic for generating images.
+#def main_page(submitted: bool, width: int, height: int, num_outputs: int,
+   #           style: str, num_inference_steps: int, guidance_scale: float,
+   #           prompt_strength: float, refine: str, high_noise_frac: float,
+     #         prompt: str) -> None:
 
-    Args:
-        submitted (bool): Flag indicating whether the form has been submitted.
-        width (int): Width of the output image.
-        height (int): Height of the output image.
-        num_outputs (int): Number of images to output.
-        scheduler (str): Scheduler type for the model.
-        num_inference_steps (int): Number of denoising steps.
-        guidance_scale (float): Scale for classifier-free guidance.
-        prompt_strength (float): Prompt strength when using img2img/inpaint.
-        refine (str): Refine style to use.
-        high_noise_frac (float): Fraction of noise to use for `expert_ensemble_refiner`.
-        prompt (str): Text prompt for the image generation.
-        negative_prompt (str): Text prompt for elements to avoid in the image.
-    """
+def main_page(submitted: bool,style: str, prompt: str) -> None:
+   
     if submitted:
       
 
@@ -191,7 +179,7 @@ def main_page(submitted: bool, width: int, height: int, num_outputs: int,
                                 "width": width,
                                 "height": height,
                                 "num_outputs": num_outputs,
-                                "scheduler": scheduler,
+                                "style": style,
                                 "num_inference_steps": num_inference_steps,
                                 "guidance_scale": guidance_scale,
                                 "prompt_stregth": prompt_strength,
