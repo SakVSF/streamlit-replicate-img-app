@@ -100,57 +100,62 @@ def configure_sidebar() -> None:
     This function configures the sidebar of the Streamlit application, 
     including the form for user inputs and the resources section.
     """
-    with st.sidebar:
-        with st.form("my_form"):
-            st.info("**Hello! Start here ↓**", icon="👋🏾")
-            with st.expander(":rainbow[**Choose your model here**]"):
-                # Advanced Settings (for the curious minds!)
-                width = st.number_input("Width of output image", value=1024)
-                height = st.number_input("Height of output image", value=1024)
-                num_outputs = st.slider(
-                    "Number of images to output", value=1, min_value=1, max_value=4)
-                scheduler = st.selectbox('Scheduler', ('DDIM', 'DPMSolverMultistep', 'HeunDiscrete',
-                                                       'KarrasDPM', 'K_EULER_ANCESTRAL', 'K_EULER', 'PNDM'))
-                num_inference_steps = st.slider(
-                    "Number of denoising steps", value=50, min_value=1, max_value=500)
-                guidance_scale = st.slider(
-                    "Scale for classifier-free guidance", value=7.5, min_value=1.0, max_value=50.0, step=0.1)
-                prompt_strength = st.slider(
-                    "Prompt strength when using img2img/inpaint(1.0 corresponds to full destruction of infomation in image)", value=0.8, max_value=1.0, step=0.1)
-                refine = st.selectbox(
-                    "Select refine style to use (left out the other 2)", ("expert_ensemble_refiner", "None"))
-                high_noise_frac = st.slider(
-                    "Fraction of noise to use for `expert_ensemble_refiner`", value=0.8, max_value=1.0, step=0.1)
-                
-                #TODO: create dropdown of the models 
+    #with st.sidebar:
+    with st.form("my_form"):
+        st.info("**Hello! Start here ↓**", icon="👋🏾")
+        with st.expander(":rainbow[**Choose your model here**]"):
+            # Advanced Settings (for the curious minds!)
+            width = st.number_input("Width of output image", value=1024)
+            height = st.number_input("Height of output image", value=1024)
+            num_outputs = st.slider(
+                "Number of images to output", value=1, min_value=1, max_value=4)
+            scheduler = st.selectbox('Scheduler', ('DDIM', 'DPMSolverMultistep', 'HeunDiscrete',
+                                                    'KarrasDPM', 'K_EULER_ANCESTRAL', 'K_EULER', 'PNDM'))
+            num_inference_steps = st.slider(
+                "Number of denoising steps", value=50, min_value=1, max_value=500)
+            guidance_scale = st.slider(
+                "Scale for classifier-free guidance", value=7.5, min_value=1.0, max_value=50.0, step=0.1)
+            prompt_strength = st.slider(
+                "Prompt strength when using img2img/inpaint(1.0 corresponds to full destruction of infomation in image)", value=0.8, max_value=1.0, step=0.1)
+            refine = st.selectbox(
+                "Select refine style to use (left out the other 2)", ("expert_ensemble_refiner", "None"))
+            high_noise_frac = st.slider(
+                "Fraction of noise to use for `expert_ensemble_refiner`", value=0.8, max_value=1.0, step=0.1)
+            
+            #TODO: create dropdown of the models 
 
-            #TODO : 
+        #TODO : 
+        
+
+        uploaded_image1 = st.file_uploader("Upload Image 1", type=["jpg", "jpeg", "png"])
+        submitted = st.form_submit_button("Submit", type="primary", use_container_width=True)
+       
+        # The Big Red "Submit" Button!
+        if submitted:
+            # Save uploaded file to 'C:/Users/Saakshi Saraf/Downloads/test' folder.
+            save_folder = 'C:/Users/Saakshi Saraf/Downloads/test'
+            
+            # Ensure the folder exists, if not create it
+            os.makedirs(save_folder, exist_ok=True)
+            
+            # Save uploaded_image1
+            if uploaded_image1 is not None:
+                save_path1 = Path(save_folder, uploaded_image1.name)
+                with open(save_path1, "wb") as f:
+                    f.write(uploaded_image1.getvalue())
+                st.success(f'File {uploaded_image1.name} is successfully saved at {save_path1}')
+
             
 
-            uploaded_image1 = st.file_uploader("Upload Image 1", type=["jpg", "jpeg", "png"])
-            uploaded_image2 = st.file_uploader("Upload Image 2", type=["jpg", "jpeg", "png"])
-            # The Big Red "Submit" Button!
-            submitted = st.form_submit_button(
-                "Submit", type="primary", use_container_width=True)
-            if submitted:
-                # Save uploaded file to 'F:/tmp' folder.
-                save_folder = 'F:/tmp'
-                save_path = Path(save_folder, uploaded_image1.name)
-                os.write(1, f"{save_path}\n".encode())
-            
-
-                if save_path.exists():
-                    st.success(f'File {uploaded_image1.name} is successfully saved!')
-
-    
-
-        return submitted, width, height, num_outputs, scheduler, num_inference_steps, guidance_scale, prompt_strength, refine, high_noise_frac, uploaded_image1, uploaded_image2
+        #return submitted, width, height, num_outputs, scheduler, num_inference_steps, guidance_scale, prompt_strength, refine, high_noise_frac, uploaded_image1, uploaded_image2
+        main_page(submitted, width, height, num_outputs, scheduler, num_inference_steps,
+              guidance_scale, prompt_strength, refine, high_noise_frac, uploaded_image1)
 
 
 def main_page(submitted: bool, width: int, height: int, num_outputs: int,
               scheduler: str, num_inference_steps: int, guidance_scale: float,
               prompt_strength: float, refine: str, high_noise_frac: float,
-              prompt: str, negative_prompt: str) -> None:
+              prompt: str) -> None:
     """Main page layout and logic for generating images.
 
     Args:
@@ -269,10 +274,8 @@ def main():
     It retrieves the user inputs from the sidebar, and passes them to the main page function.
     The main page function then generates images based on these inputs.
     """
-    submitted, width, height, num_outputs, scheduler, num_inference_steps, guidance_scale, prompt_strength, refine, high_noise_frac, prompt, negative_prompt = configure_sidebar()
-    main_page(submitted, width, height, num_outputs, scheduler, num_inference_steps,
-              guidance_scale, prompt_strength, refine, high_noise_frac, prompt, negative_prompt)
-
+    configure_sidebar()
+    
 
 if __name__ == "__main__":
     main()
