@@ -5,7 +5,8 @@ import zipfile
 import io
 from utils import icon
 from streamlit_image_select import image_select
-
+from pathlib import Path
+import os
 # UI configurations
 st.set_page_config(page_title="Neural Style Transfer",
                    page_icon=":bridge_at_night:",
@@ -131,6 +132,15 @@ def configure_sidebar() -> None:
             # The Big Red "Submit" Button!
             submitted = st.form_submit_button(
                 "Submit", type="primary", use_container_width=True)
+            if submitted:
+                # Save uploaded file to 'F:/tmp' folder.
+                save_folder = 'F:/tmp'
+                save_path = Path(save_folder, uploaded_image1.name)
+                os.write(1, f"{save_path}\n".encode())
+            
+
+                if save_path.exists():
+                    st.success(f'File {uploaded_image1.name} is successfully saved!')
 
     
 
@@ -158,6 +168,8 @@ def main_page(submitted: bool, width: int, height: int, num_outputs: int,
         negative_prompt (str): Text prompt for elements to avoid in the image.
     """
     if submitted:
+      
+
         with st.status('👩🏾‍🍳 Whipping up your words into art...', expanded=True) as status:
             st.write("⚙️ Model initiated")
             st.write("🙆‍♀️ Stand up and strecth in the meantime")
