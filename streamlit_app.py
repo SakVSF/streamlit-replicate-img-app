@@ -1,284 +1,156 @@
-import replicate
 import streamlit as st
-import requests
-import zipfile
-import io
-from utils import icon
 from streamlit_image_select import image_select
 from pathlib import Path
 import os
+import tempfile
+
 # UI configurations
 st.set_page_config(page_title="Neural Style Transfer",
                    page_icon=":bridge_at_night:",
                    layout="wide")
-icon.show_icon()
-st.markdown("# :rainbow[Automating Visual Artistry]")
 
-# API Tokens and endpoints from `.streamlit/secrets.toml` file
-REPLICATE_API_TOKEN = st.secrets["REPLICATE_API_TOKEN"]
-REPLICATE_MODEL_ENDPOINTSTABILITY = st.secrets["REPLICATE_MODEL_ENDPOINTSTABILITY"]
 
-# Resources text, link, and logo
-replicate_text = "Stability AI SDXL Model on Replicate"
-replicate_link = "https://replicate.com/stability-ai/sdxl"
-replicate_logo = "https://storage.googleapis.com/llama2_release/Screen%20Shot%202023-07-21%20at%2012.34.05%20PM.png"
+# Placeholder for gallery
+home = st.empty()
+gen_image = st.empty()
+gallery= st.empty()
 
-# Placeholders for images and gallery
-generated_images_placeholder = st.empty()
-gallery_placeholder = st.empty()
-def show_icon():
-    """Shows a gallery button."""
 
-    st.markdown("""
-    <style>
-    .gallery-button {
-        padding: 0.5rem 1rem;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
-    st.markdown('<button onclick="show_gallery()" class="gallery-button">Gallery</button>', unsafe_allow_html=True)
+def show_home(submitted, output_image_path):
+    gen_image.empty()
+    gallery.empty()
+    submitted=False
 
-    st.markdown('<script>function show_gallery() {window.location.href = "#gallery";}</script>', unsafe_allow_html=True)
+    
+    
+    with home.container():
+        st.markdown(
+         f"""
+         <style>
+         .stApp {{
+             background: url("https://static.vecteezy.com/system/resources/previews/023/900/029/non_2x/abstract-colorful-watercolor-background-watercolor-texture-digital-art-painting-illustration-hand-painted-watercolor-abstract-morning-light-wallpaper-it-is-a-hand-drawn-vector.jpg");
+             background-size: cover
+         }}
+         </style>
+         """,
+         unsafe_allow_html=True
+     )
+        st.markdown("# :rainbow[Automating Visual Artistry]")
+        
 
-def show_navbar():
-    # Navigation bar with a gallery button
-    st.markdown("""
-    <style>
-    .navbar {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        padding: 1rem;
-        background-color: #f0f0f0;
-    }
-    .gallery-button {
-        padding: 0.5rem 1rem;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+        with st.form("my_form"):
+            
+            st.info("**Hello! Bring out your inner Picasso here ↓**", icon="👋🏾")
+            with st.expander("**Choose your model**"):
+                style = st.selectbox('Style', ('Mosaic', 'VanGogh', 'Picasso', 'GAN-1', 'GAN-2', 'GAN-3', 'GAN-4', 'GAN-5'))
+                caption = st.text_input("Write a unique caption", value="My first painting")
+                
 
-    st.markdown('<a href="#gallery" class="gallery-button">Gallery</a>', unsafe_allow_html=True)
+            uploaded_image1 = st.file_uploader("Upload Image 1", type=["jpg", "jpeg", "png"])
+            submitted = st.form_submit_button("Submit", type="primary", use_container_width=True)
+
+            if submitted:
+                # Save the uploaded file to a temporary directory
+                save_folder = 'C:/Users/Saakshi Saraf/Downloads/test'
+                # Ensure the folder exists, if not create it
+                os.makedirs(save_folder, exist_ok=True)
+                
+                if uploaded_image1 is not None:
+                    save_path1 = Path(save_folder, uploaded_image1.name)
+                    with open(save_path1, "wb") as f:
+                        f.write(uploaded_image1.getvalue())
+                    st.success(f'File {uploaded_image1.name} is successfully saved at {save_path1}')     
+
+                else:
+                    st.error('Error in submitting, please try again')
+                    
+        if submitted:    
+            home.empty() 
+            #TODO: A FUNCTION CALL -> call to function that takes in uploaded image at save_path1 and stores output image at some other path
+            show_output(uploaded_image1)
+
+        
+        
+
+def show_output(output):
+
+    gallery.empty()
+    home.empty()
+  
+    
+    with gen_image.container():
+        st.markdown(
+         f"""
+         <style>
+         .stApp {{
+             background: url("https://t3.ftcdn.net/jpg/06/27/85/70/360_F_627857047_VDETCsSfRkZuo5Fzdy3eHL1ZGdhsqYv9.jpg");
+             background-size: cover
+         }}
+         </style>
+         """,
+         unsafe_allow_html=True
+     )
+        st.markdown("# :rainbow[Automating Visual Artistry]")
+        
+       
+        st.image(output, caption="Generated Image 🎈", use_column_width=True)
+
+        #VIEW IN GALLERY BUTTON NOT WORKING-> SHOULD ROUTE TO GALLERY ON CLICKING 
+        #view_in_gallery = st.button("View in Gallery", use_container_width=True)
+
+    #if view_in_gallery:
+        #st.sidebar.radio("Navigation", ("Home", "Gallery"), index=1)
+        #show_gallery()
+    # Update the selected page in the sidebar to "Gallery"
+    
 
 
 def show_gallery():
-    # Display the gallery
-    st.markdown("<h2 id='gallery'>Gallery</h2>", unsafe_allow_html=True)
-    img = image_select(
-        label="Like what you see? Right-click and save! It's not stealing if we're sharing! 😉",
-        images=[
-            "gallery/farmer_sunset.png", "gallery/astro_on_unicorn.png",
-            "gallery/friends.png", "gallery/wizard.png", "gallery/puppy.png",
-            "gallery/cheetah.png", "gallery/viking.png",
-        ],
-        captions=["A farmer tilling a farm with a tractor during sunset, cinematic, dramatic",
-                  "An astronaut riding a rainbow unicorn, cinematic, dramatic",
-                  "A group of friends laughing and dancing at a music festival, joyful atmosphere, 35mm film photography",
-                  "A wizard casting a spell, intense magical energy glowing from his hands, extremely detailed fantasy illustration",
-                  "A cute puppy playing in a field of flowers, shallow depth of field, Canon photography",
-                  "A cheetah mother nurses her cubs in the tall grass of the Serengeti. The early morning sun beams down through the grass. National Geographic photography by Frans Lanting",
-                  "A close-up portrait of a bearded viking warrior in a horned helmet. He stares intensely into the distance while holding a battle axe. Dramatic mood lighting, digital oil painting",
-                  ],
-        use_container_width=True
-    )
-
-
-def configure_sidebar() -> None:
-    """
-    Setup and display the sidebar elements.
-
-    This function configures the sidebar of the Streamlit application, 
-    including the form for user inputs and the resources section.
-    """
-    #with st.sidebar:
-    with st.form("my_form"):
-        st.info("**Hello! Start here ↓**", icon="👋🏾")
-        with st.expander(":rainbow[**Choose your model here**]"):
-            # Advanced Settings (for the curious minds!)
-           # width = st.number_input("Width of output image", value=1024)
-           # height = st.number_input("Height of output image", value=1024)
-           # num_outputs = st.slider(
-             #   "Number of images to output", value=1, min_value=1, max_value=4)
-            style = st.selectbox('style', ('Mosaic', 'VanGogh', 'Picasso',
-                                                    'GAN-1', 'Gan-2', 'GAN-3', 'GAN-4', 'GAN-5'))
-            #num_inference_steps = st.slider(
-              #  "Number of denoising steps", value=50, min_value=1, max_value=500)
-           # guidance_scale = st.slider(
-           #     "Scale for classifier-free guidance", value=7.5, min_value=1.0, max_value=50.0, step=0.1)
-           # prompt_strength = st.slider(
-               # "Prompt strength when using img2img/inpaint(1.0 corresponds to full destruction of infomation in image)", value=0.8, max_value=1.0, step=0.1)
-           # refine = st.selectbox(
-              #  "Select refine style to use (left out the other 2)", ("expert_ensemble_refiner", "None"))
-           # high_noise_frac = st.slider(
-              #  "Fraction of noise to use for `expert_ensemble_refiner`", value=0.8, max_value=1.0, step=0.1)
-            
-            #TODO: create dropdown of the models 
-
-        #TODO : 
-        
-
-        uploaded_image1 = st.file_uploader("Upload Image 1", type=["jpg", "jpeg", "png"])
-        submitted = st.form_submit_button("Submit", type="primary", use_container_width=True)
+  
+ 
+    gen_image.empty()
+    home.empty()
+    with gallery.container():
        
-        # The Big Red "Submit" Button!
-        if submitted:
-            # Save uploaded file to 'C:/Users/Saakshi Saraf/Downloads/test' folder.
-            save_folder = 'C:/Users/Saakshi Saraf/Downloads/test'
-            
-            # Ensure the folder exists, if not create it
-            os.makedirs(save_folder, exist_ok=True)
-            
-            # Save uploaded_image1
-            if uploaded_image1 is not None:
-                save_path1 = Path(save_folder, uploaded_image1.name)
-                with open(save_path1, "wb") as f:
-                    f.write(uploaded_image1.getvalue())
-                st.success(f'File {uploaded_image1.name} is successfully saved at {save_path1}')
-
-            
-
-        #return submitted, width, height, num_outputs, style, num_inference_steps, guidance_scale, prompt_strength, refine, high_noise_frac, uploaded_image1, uploaded_image2
-        #main_page(submitted, width, height, num_outputs, style, num_inference_steps,
-             # guidance_scale, prompt_strength, refine, high_noise_frac, uploaded_image1)
-        main_page(submitted,  style, uploaded_image1)
-
-
-#def main_page(submitted: bool, width: int, height: int, num_outputs: int,
-   #           style: str, num_inference_steps: int, guidance_scale: float,
-   #           prompt_strength: float, refine: str, high_noise_frac: float,
-     #         prompt: str) -> None:
-
-def main_page(submitted: bool,style: str, prompt: str) -> None:
-   
-    if submitted:
-      
-
-        with st.status('👩🏾‍🍳 Whipping up your words into art...', expanded=True) as status:
-            st.write("⚙️ Model initiated")
-            st.write("🙆‍♀️ Stand up and strecth in the meantime")
-            try:
-                # Only call the API if the "Submit" button was pressed
-                if submitted:
-                    # Calling the replicate API to get the image
-                    with generated_images_placeholder.container():
-                        all_images = []  # List to store all generated images
-                        output = replicate.run(
-                            REPLICATE_MODEL_ENDPOINTSTABILITY,
-                            input={
-                                "prompt": prompt,
-                                "width": width,
-                                "height": height,
-                                "num_outputs": num_outputs,
-                                "style": style,
-                                "num_inference_steps": num_inference_steps,
-                                "guidance_scale": guidance_scale,
-                                "prompt_stregth": prompt_strength,
-                                "refine": refine,
-                                "high_noise_frac": high_noise_frac
-                            }
-                        )
-                        if output:
-                            st.toast(
-                                'Your image has been generated!', icon='😍')
-                            # Save generated image to session state
-                            st.session_state.generated_image = output
-
-                            # Displaying the image
-                            for image in st.session_state.generated_image:
-                                with st.container():
-                                    st.image(image, caption="Generated Image 🎈",
-                                             use_column_width=True)
-                                    # Add image to the list
-                                    all_images.append(image)
-
-                                    response = requests.get(image)
-                        # Save all generated images to session state
-                        st.session_state.all_images = all_images
-
-                        # Create a BytesIO object
-                        zip_io = io.BytesIO()
-
-                        # Download option for each image
-                        with zipfile.ZipFile(zip_io, 'w') as zipf:
-                            for i, image in enumerate(st.session_state.all_images):
-                                response = requests.get(image)
-                                if response.status_code == 200:
-                                    image_data = response.content
-                                    # Write each image to the zip file with a name
-                                    zipf.writestr(
-                                        f"output_file_{i+1}.png", image_data)
-                                else:
-                                    st.error(
-                                        f"Failed to fetch image {i+1} from {image}. Error code: {response.status_code}", icon="🚨")
-                        # Create a download button for the zip file
-                        st.download_button(
-                            ":red[**Download All Images**]", data=zip_io.getvalue(), file_name="output_files.zip", mime="application/zip", use_container_width=True)
-                status.update(label="✅ Images generated!",
-                              state="complete", expanded=False)
-            except Exception as e:
-                print(e)
-                st.error(f'Encountered an error: {e}', icon="🚨")
-
-    # If not submitted, chill here 🍹
-    else:
-        pass
-
-    # Gallery display for inspo
-    with gallery_placeholder.container():
+        st.markdown("# :rainbow[Gallery]")
+        st.markdown(
+         f"""
+         <style>
+         .stApp {{
+             background: url("https://b.rgbimg.com/users/x/xy/xymonau/600/nLICqmW.jpg");
+             background-size: cover
+         }}
+         </style>
+         """,
+         unsafe_allow_html=True
+     )
+        
+        #Display all images stored in local folder
         save_folder = 'C:/Users/Saakshi Saraf/Downloads/test'
-
-
-        paths = []
-        sorted_image_paths = []
-        # Iterate over all files in the folder
-        for file_path in Path(save_folder).iterdir():
-            # Check if the file is an image file
-            if file_path.suffix.lower() in ['.jpg', '.jpeg', '.png']:
-                paths.append((file_path, file_path.stat().st_mtime))  # 
-
+        paths = [(file_path, file_path.stat().st_mtime) for file_path in Path(save_folder).iterdir()
+                 if file_path.suffix.lower() in ['.jpg', '.jpeg', '.png']]
         sorted_image_paths = sorted(paths, key=lambda x: x[1], reverse=True)
-        image_paths =[]
-        image_paths= [str(file_path) for file_path, _ in sorted_image_paths]
+        image_paths = [str(file_path) for file_path, _ in sorted_image_paths]
     
         img = image_select(
-            label="Like what you see? Select the image to save to your gallery to view your masterpieces later! 😉",
+            label="A collection of your artpieces, delivered through our Neural Style Transfer models!",
             images=image_paths,
-               # "gallery/farmer_sunset.png", "gallery/astro_on_unicorn.png",
-               # "gallery/friends.png", "gallery/wizard.png", "gallery/puppy.png",
-                #"gallery/cheetah.png", "gallery/viking.png",
-           # ],
-            #captions=["A farmer tilling a farm with a tractor during sunset, cinematic, dramatic",
-                 #     "An astronaut riding a rainbow unicorn, cinematic, dramatic",
-                    #  "A group of friends laughing and dancing at a music festival, joyful atmosphere, 35mm film photography",
-                    #  "A wizard casting a spell, intense magical energy glowing from his hands, extremely detailed fantasy illustration",
-                     # "A cute puppy playing in a field of flowers, shallow depth of field, Canon photography",
-                     # "A cheetah mother nurses her cubs in the tall grass of the Serengeti. The early morning sun beams down through the grass. National Geographic photography by Frans Lanting",
-                     # "A close-up portrait of a bearded viking warrior in a horned helmet. He stares intensely into the distance while holding a battle axe. Dramatic mood lighting, digital oil painting",
-                     # ],
             use_container_width=True
         )
 
 
 def main():
-    """
-    Main function to run the Streamlit application.
+    submitted = False
 
-    This function initializes the sidebar configuration and the main page layout.
-    It retrieves the user inputs from the sidebar, and passes them to the main page function.
-    The main page function then generates images based on these inputs.
-    """
-    configure_sidebar()
-    
+    output_image_path = None
+    page = st.sidebar.radio("Navigation", ("Home", "Gallery"))
+
+    if page == "Home":
+        show_home(submitted, output_image_path)
+    elif page == "Gallery":
+        show_gallery()
+
 
 if __name__ == "__main__":
     main()
