@@ -1,0 +1,18 @@
+{
+    "landscape": {
+        "model_name": "Mosaic",
+        "description": "Hello"
+    },
+    "70s": {
+        "model_name": "Mosaic",
+        "description": ""
+    },
+    "Ben Lewis Giles": {
+        "model_name": "Picasso",
+        "description": "Inspired Ben Lewis"
+    },
+    "pink-and-dark": {
+        "model_name": "Picasso",
+        "description": "Abstract"
+    }
+}

@@ -2,6 +2,7 @@ import streamlit as st
 from streamlit_image_select import image_select
 from pathlib import Path
 import os
+import json
 import tempfile
 
 # UI configurations
@@ -9,20 +10,15 @@ st.set_page_config(page_title="Neural Style Transfer",
                    page_icon=":bridge_at_night:",
                    layout="wide")
 
-
 # Placeholder for gallery
 home = st.empty()
 gen_image = st.empty()
 gallery= st.empty()
 
-
-
 def show_home(submitted, output_image_path):
     gen_image.empty()
     gallery.empty()
-    submitted=False
-
-    
+    submitted = False
     
     with home.container():
         st.markdown(
@@ -46,13 +42,12 @@ def show_home(submitted, output_image_path):
                 style = st.selectbox('Style', ('Mosaic', 'VanGogh', 'Picasso', 'GAN-1', 'GAN-2', 'GAN-3', 'GAN-4', 'GAN-5'))
                 caption = st.text_input("Write a unique caption", value="My first painting")
                 
-
             uploaded_image1 = st.file_uploader("Upload Image 1", type=["jpg", "jpeg", "png"])
             submitted = st.form_submit_button("Submit", type="primary", use_container_width=True)
 
             if submitted:
                 # Save the uploaded file to a temporary directory
-                save_folder = 'C:/Users/Saakshi Saraf/Downloads/test'
+                save_folder = '/workspaces/streamlit-replicate-img-app/gallery'
                 # Ensure the folder exists, if not create it
                 os.makedirs(save_folder, exist_ok=True)
                 
@@ -60,25 +55,98 @@ def show_home(submitted, output_image_path):
                     save_path1 = Path(save_folder, uploaded_image1.name)
                     with open(save_path1, "wb") as f:
                         f.write(uploaded_image1.getvalue())
-                    st.success(f'File {uploaded_image1.name} is successfully saved at {save_path1}')     
-
+                    st.success(f'File {uploaded_image1.name} is successfully saved at {save_path1}')
+                    
+                    # Generate description for the uploaded image
+                    generate_description(uploaded_image1.name, style, caption)
                 else:
                     st.error('Error in submitting, please try again')
                     
         if submitted:    
             home.empty() 
-            #TODO: A FUNCTION CALL -> call to function that takes in uploaded image at save_path1 and stores output image at some other path
+            # TODO: A FUNCTION CALL -> call to function that takes in uploaded image at save_path1 and stores output image at some other path
             show_output(uploaded_image1)
 
+def generate_description(image_name, style, caption):
+    # Remove file extension from the image name
+    image_name_without_extension = os.path.splitext(image_name)[0]
+    
+    description_file_path = '/workspaces/streamlit-replicate-img-app/gallery/description.json'
+    
+    # Load existing descriptions if the file exists
+    descriptions = {}
+    if os.path.exists(description_file_path):
+        with open(description_file_path, "r") as desc_file:
+            descriptions = json.load(desc_file)
+    
+    # Update the descriptions with the new image information
+    descriptions[image_name_without_extension] = {"model_name": style, "description": caption}
+    
+    # Write the updated descriptions back to the file
+    with open(description_file_path, "w") as desc_file:
+        json.dump(descriptions, desc_file, indent=4)
+
+def show_gallery():
+    gen_image.empty()
+    home.empty()
+    
+    with gallery.container():
+        st.markdown("# :rainbow[Gallery]")
+        st.markdown(
+            f"""
+            <style>
+            .stApp {{
+                background: url("https://b.rgbimg.com/users/x/xy/xymonau/600/nLICqmW.jpg");
+                background-size: cover
+            }}
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
         
+        # Read all descriptions from the description file
+        description_file_path = '/workspaces/streamlit-replicate-img-app/gallery/description.json'
+        if os.path.exists(description_file_path):
+            with open(description_file_path, "r") as desc_file:
+                descriptions = json.loads(desc_file.read())
+                print("hi", descriptions)
+        else:
+            descriptions = {}
         
+        # Display all images stored in the local folder
+        save_folder = '/workspaces/streamlit-replicate-img-app/gallery'
+        image_paths = [str(file_path) for file_path in Path(save_folder).glob('*') if file_path.suffix.lower() in ['.jpg', '.jpeg', '.png']]
+        
+        if image_paths:
+            for image_path in image_paths:
+                image_name = Path(image_path).stem
+                
+                # Check if the image_name exists in the descriptions dictionary
+                if image_name in descriptions:
+                    model_name = descriptions[image_name].get("model_name", "")
+                    description = descriptions[image_name].get("description", "")
+                else:
+                    model_name = ""
+                    description = ""
+                
+                # Construct caption including model name and optional description
+                caption_parts = [f"{image_name} - Model: {model_name}"]
+                if description:
+                    caption_parts.append(f"Description: {description}")
+                
+                caption = " - ".join(caption_parts)
+                
+                # Display the image with its caption
+                st.image(image_path, caption=caption, use_column_width=True)
+        else:
+            # Display a message if no images are found in the gallery folder
+            st.write("No images available in the gallery.")
 
 def show_output(output):
 
     gallery.empty()
     home.empty()
   
-    
     with gen_image.container():
         st.markdown(
          f"""
@@ -103,42 +171,6 @@ def show_output(output):
         #st.sidebar.radio("Navigation", ("Home", "Gallery"), index=1)
         #show_gallery()
     # Update the selected page in the sidebar to "Gallery"
-    
-
-
-def show_gallery():
-  
- 
-    gen_image.empty()
-    home.empty()
-    with gallery.container():
-       
-        st.markdown("# :rainbow[Gallery]")
-        st.markdown(
-         f"""
-         <style>
-         .stApp {{
-             background: url("https://b.rgbimg.com/users/x/xy/xymonau/600/nLICqmW.jpg");
-             background-size: cover
-         }}
-         </style>
-         """,
-         unsafe_allow_html=True
-     )
-        
-        #Display all images stored in local folder
-        save_folder = 'C:/Users/Saakshi Saraf/Downloads/test'
-        paths = [(file_path, file_path.stat().st_mtime) for file_path in Path(save_folder).iterdir()
-                 if file_path.suffix.lower() in ['.jpg', '.jpeg', '.png']]
-        sorted_image_paths = sorted(paths, key=lambda x: x[1], reverse=True)
-        image_paths = [str(file_path) for file_path, _ in sorted_image_paths]
-    
-        img = image_select(
-            label="A collection of your artpieces, delivered through our Neural Style Transfer models!",
-            images=image_paths,
-            use_container_width=True
-        )
-
 
 def main():
     submitted = False
@@ -150,7 +182,6 @@ def main():
         show_home(submitted, output_image_path)
     elif page == "Gallery":
         show_gallery()
-
 
 if __name__ == "__main__":
     main()
