@@ -1,3 +1,4 @@
+import glob
 import streamlit as st
 from streamlit_image_select import image_select
 from pathlib import Path
@@ -103,7 +104,7 @@ def show_gallery():
             """,
             unsafe_allow_html=True
         )
-        
+
         # Read all descriptions from the description file
         description_file_path = '/workspaces/streamlit-replicate-img-app/gallery/description.json'
         if os.path.exists(description_file_path):
@@ -115,29 +116,39 @@ def show_gallery():
         
         # Display all images stored in the local folder
         save_folder = '/workspaces/streamlit-replicate-img-app/gallery'
-        image_paths = [str(file_path) for file_path in Path(save_folder).glob('*') if file_path.suffix.lower() in ['.jpg', '.jpeg', '.png']]
-        
+        paths = [(file_path, file_path.stat().st_mtime) for file_path in Path(save_folder).iterdir()
+                 if file_path.suffix.lower() in ['.jpg', '.jpeg', '.png']]
+        sorted_image_paths = sorted(paths, key=lambda x: x[1], reverse=True)
+        image_paths = [str(file_path) for file_path, _ in sorted_image_paths]
+
         if image_paths:
-            for image_path in image_paths:
-                image_name = Path(image_path).stem
-                
-                # Check if the image_name exists in the descriptions dictionary
-                if image_name in descriptions:
-                    model_name = descriptions[image_name].get("model_name", "")
-                    description = descriptions[image_name].get("description", "")
-                else:
-                    model_name = ""
-                    description = ""
-                
-                # Construct caption including model name and optional description
-                caption_parts = [f"{image_name} - Model: {model_name}"]
-                if description:
-                    caption_parts.append(f"Description: {description}")
-                
-                caption = " - ".join(caption_parts)
-                
-                # Display the image with its caption
-                st.image(image_path, caption=caption, use_column_width=True)
+            n = st.number_input("Grid Width", 1, 5, 2)
+            groups = []
+            for i in range(0, len(image_paths), n):
+                groups.append(image_paths[i:i+n])
+
+            for group in groups:
+                cols = st.columns(n)
+                for i, image_path in enumerate(group):
+                    image_name = Path(image_path).stem
+                    # Check if the image_name exists in the descriptions dictionary
+                    if image_name in descriptions:
+                        model_name = descriptions[image_name].get("model_name", "")
+                        description = descriptions[image_name].get("description", "")
+                    else:
+                        model_name = ""
+                        description = ""
+                    
+                    # Construct caption including model name and optional description
+                    caption_parts = [f"{image_name} - Model: {model_name}"]
+                    if description:
+                        caption_parts.append(f"Description: {description}")
+                    
+                    caption = " - ".join(caption_parts).title()
+                    
+                    # Display the image with its caption
+                    cols[i].image(image_path, caption=caption, use_column_width=True)
+
         else:
             # Display a message if no images are found in the gallery folder
             st.write("No images available in the gallery.")
