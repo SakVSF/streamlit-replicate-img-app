@@ -1,18 +1,22 @@
 {
-    "landscape": {
-        "model_name": "Mosaic",
-        "description": "Hello"
+    "landscape.jpg": {
+        "model_name": "VanGogh",
+        "art_title": "Watercolor",
+        "description": "Variation landscape"
     },
-    "70s": {
+    "70s.png": {
         "model_name": "Mosaic",
+        "art_title": "70s Abstract",
         "description": ""
     },
-    "Ben Lewis Giles": {
-        "model_name": "Picasso",
-        "description": "Inspired Ben Lewis"
+    "Ben Lewis Giles.png": {
+        "model_name": "GAN-2",
+        "art_title": "Ben Lewis Giles",
+        "description": "Mixed Collage"
     },
-    "sea": {
+    "sea.jpg": {
         "model_name": "Picasso",
-        "description": "Sea Foam"
+        "art_title": "Sea Foam",
+        "description": "Turbulent Waters"
     }
 }
