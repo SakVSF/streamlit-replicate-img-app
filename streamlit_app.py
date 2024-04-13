@@ -1,11 +1,18 @@
 import streamlit as st
 import requests
 import zipfile
-import io
+#import io
 from utils import icon
 from pathlib import Path
 import os
 from PIL import Image
+import numpy as np
+import onnxruntime as rt
+from skimage import io
+from skimage import img_as_ubyte
+
+
+
 
 # UI configurations
 st.set_page_config(page_title="Neural Style Transfer",
@@ -100,19 +107,80 @@ def configure_sidebar() -> None:
 
             #TODO : 
             
-
+            ##################################
             uploaded_image1 = st.file_uploader("Upload Image 1", type=["jpg", "jpeg", "png"])
             uploaded_image2 = st.file_uploader("Upload Image 2", type=["jpg", "jpeg", "png"])
             # The Big Red "Submit" Button!
             submitted = st.form_submit_button(
                 "Submit", type="primary", use_container_width=True)
+            
             if submitted:
                 # Save uploaded file to 'F:/tmp' folder.
                 save_folder = 'F:/tmp'
                 save_path = Path(save_folder, uploaded_image1.name)
                 os.write(1, f"{save_path}\n".encode())
+
+                def get_prediction(input_path, model_path):
+                    max_dim = 512
+
+                    def load_and_preprocess_image(image_path, target_size=(max_dim, max_dim, 3)):
+                        img = io.imread(image_path)
+                        if target_size[0] is not None and target_size[1] is not None:
+                            img = np.array(Image.fromarray(img).resize((target_size[1], target_size[0])))
+                        img_array = img.astype(np.float32) / 255.0
+                        return img_array
+
+                    #content_image = load_and_preprocess_image(input_path)
+                    content_image = load_and_preprocess_image('city.jpg')
+
+                    content_image = (np.expand_dims(content_image, axis=0))
+
+                    x = content_image
+
+                    model_path = 'generator_block5_conv2.onnx'
+                    #model_path = model_path
+
+                    providers = ['CPUExecutionProvider']
+                    m = rt.InferenceSession(model_path, providers=providers)
+                    onnx_pred = m.run(None, {"input": x})[0][0]
+
+                    onnx_pred = (onnx_pred - onnx_pred.min()) / (onnx_pred.max() - onnx_pred.min())
+                    onnx_pred = (onnx_pred * 255).astype(np.uint8)
+
+
+
+                    print(np.array(onnx_pred).shape)
+
+                    output_path = 'onnx_generated_city.jpg'    
+
+                    io.imsave(output_path, onnx_pred)
+
+                    def save_image_to_folder(save_folder, uploaded_image_name, image_array):
+                        save_path = Path(save_folder) / uploaded_image_name
+                        io.imsave(save_path, image_array)
+                        print(f"Image saved successfully at: {save_path}")
+
+                    save_folder = 'F:/tmp'  # Specify the path to your desired output folder
+                    uploaded_image_name = 'uploaded_image.jpg'  #uploaded_image1.name
+
+                    image_to_save = onnx_pred  # Your image array to save
+
+                    save_image_to_folder(save_folder, uploaded_image_name, image_to_save)
+
+                    st.image('onnx_generated_city.jpg')
+
             
 
+
+            # model_selection = None
+            # if model_selection == Gan1:
+            #     get_prediction(input_path, Gan1_model_path)
+                
+            # if model_selection == Gan2:
+            #     get_prediction(input_path, Gan2_model_path)
+
+
+        #########################################
                 if save_path.exists():
                     st.success(f'File {uploaded_image1.name} is successfully saved!')
 
@@ -150,7 +218,8 @@ def main_page(submitted: bool, width: int, height: int, num_outputs: int,
                 if submitted:
                     # Calling the replicate API to get the image
                     with generated_images_placeholder.container():
-                        all_images = []  # List to store all generated images
+                        all_images = []  
+                        # List to store all generated images
                         # output = replicate.run(
                         #     REPLICATE_MODEL_ENDPOINTSTABILITY,
                         #     input={
