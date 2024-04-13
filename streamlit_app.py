@@ -1,10 +1,9 @@
-import glob
 import streamlit as st
+from streamlit_card import card
 from streamlit_image_select import image_select
 from pathlib import Path
-import os
 import json
-import tempfile
+import os
 
 # UI configurations
 st.set_page_config(page_title="Neural Style Transfer",
@@ -35,7 +34,6 @@ def show_home(submitted, output_image_path):
      )
         st.markdown("# :rainbow[Automating Visual Artistry]")
         
-
         with st.form("my_form"):
             
             st.info("**Hello! Bring out your inner Picasso here ↓**", icon="👋🏾")
@@ -43,7 +41,7 @@ def show_home(submitted, output_image_path):
                 style = st.selectbox('Style', ('Mosaic', 'VanGogh', 'Picasso', 'GAN-1', 'GAN-2', 'GAN-3', 'GAN-4', 'GAN-5'))
                 caption = st.text_input("Write a unique caption", value="My first painting")
                 
-            uploaded_image1 = st.file_uploader("Upload Image 1", type=["jpg", "jpeg", "png"])
+            uploaded_image1 = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
             submitted = st.form_submit_button("Submit", type="primary", use_container_width=True)
 
             if submitted:
@@ -105,12 +103,15 @@ def show_gallery():
             unsafe_allow_html=True
         )
 
+        st.info("**Hello! View your Creations Here ↓**", icon="👋🏾")
+        with st.expander("**Edit Gallery Settings**"):
+                n = st.number_input("Grid Width", 1, 5, 2)
+
         # Read all descriptions from the description file
         description_file_path = '/workspaces/streamlit-replicate-img-app/gallery/description.json'
         if os.path.exists(description_file_path):
             with open(description_file_path, "r") as desc_file:
                 descriptions = json.loads(desc_file.read())
-                print("hi", descriptions)
         else:
             descriptions = {}
         
@@ -122,7 +123,6 @@ def show_gallery():
         image_paths = [str(file_path) for file_path, _ in sorted_image_paths]
 
         if image_paths:
-            n = st.number_input("Grid Width", 1, 5, 2)
             groups = []
             for i in range(0, len(image_paths), n):
                 groups.append(image_paths[i:i+n])
@@ -145,8 +145,10 @@ def show_gallery():
                         caption_parts.append(f"Description: {description}")
                     
                     caption = " - ".join(caption_parts).title()
+
+                    print("path", image_path)
                     
-                    # Display the image with its caption
+                    # # Display the image with its caption
                     cols[i].image(image_path, caption=caption, use_column_width=True)
 
         else:
