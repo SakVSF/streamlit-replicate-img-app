@@ -6,6 +6,7 @@ import json
 import os
 import PIL as pil
 import nst_mosaic
+import gans
 # import nst_vangogh
 # import nst_picasso
 # import gan_1
@@ -98,6 +99,17 @@ def show_home(submitted, output_image_path):
         if submitted:    
             home.empty() 
             # TODO: A FUNCTION CALL -> call to function that takes in uploaded image at save_path and stores output image at some other path
+            if model == GAN1:
+                gans.get_gan_prediction("input_path", "generator_block5_conv1.onnx")
+            if model == GAN2:
+                gans.get_gan_prediction("input_path", "generator_block5_conv2.onnx")
+            if model == GAN3:
+                gans.get_gan_prediction("input_path", "generator_block5_conv3.onnx")
+            if model == GAN4:
+                gans.get_gan_prediction("input_path", "generator_block5_conv4.onnx")
+            if model == Combined_GAN:
+                gans.combine_images_random_block("input_path", block_size=4)
+
             show_output(save_path, style, title, caption, output_image_path)
 
 def generate_description(image_name, style, title, caption):
