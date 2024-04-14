@@ -4,7 +4,7 @@ from streamlit_image_select import image_select
 from pathlib import Path
 import json
 import os
-
+import PIL as pil
 import nst_mosaic
 # import nst_vangogh
 # import nst_picasso
@@ -27,8 +27,9 @@ gallery= st.empty()
 def stylize_image(model_type, inference_config):
     stylization_functions = {
         'Mosaic': nst_mosaic.stylize_static_image,
-        # 'VanGogh': nst_vangogh.stylize_static_image,
-        # 'Picasso': nst_picasso.stylize_static_image,
+        'Starry Night': nst_mosaic.stylize_static_image,
+        'Wave Crop': nst_mosaic.stylize_static_image,
+        'Giger Crop': nst_mosaic.stylize_static_image,
         # 'GAN-1': gan_1.stylize_static_image,
         # 'GAN-2': gan_2.stylize_static_image,
         # 'GAN-3': gan_3.stylize_static_image,
@@ -39,9 +40,6 @@ def stylize_image(model_type, inference_config):
     # Check if the model type is valid
     if model_type in stylization_functions:
         # Customize inference_config based on the model type
-        if model_type == 'Mosaic':
-            inference_config['model_binaries_path'] = '/path/to/mosaic/model/binaries'
-            inference_config['checkpoint_name'] = 'mosaic.pth'
 
         # TODO: Add configurations for other models as needed
 
@@ -73,16 +71,17 @@ def show_home(submitted, output_image_path):
             
             st.info("**Hello! Bring out your inner Picasso here ↓**", icon="👋🏾")
             with st.expander("**Choose your model**"):
-                style = st.selectbox('Style', ('Mosaic', 'VanGogh', 'Picasso', 'GAN-1', 'GAN-2', 'GAN-3', 'GAN-4', 'GAN-5'))
+                style = st.selectbox('Style', ('Mosaic', 'Starry Night', 'Wave Crop', 'Giger Crop', 'GAN-1', 'GAN-2', 'GAN-3', 'GAN-4', 'GAN-5'))
                 title = st.text_input("Write a title for your creation", value="Untitled")
                 caption = st.text_input("Write a unique caption", value="My first painting")
                 
             uploaded_image = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
             submitted = st.form_submit_button("Submit", type="primary", use_container_width=True)
-
+            save_path = None
             if submitted:
+                print(submitted)
                 # Save the uploaded file to a temporary directory
-                raw = '/workspaces/streamlit-replicate-img-app/raw'
+                raw = 'temp_workspace/streamlit-replicate-img-app/raw'
                 # Ensure the folder exists, if not create it
                 os.makedirs(raw, exist_ok=True)
                 
@@ -90,20 +89,19 @@ def show_home(submitted, output_image_path):
                     save_path = Path(raw, uploaded_image.name)
                     with open(save_path, "wb") as f:
                         f.write(uploaded_image.getvalue())
+                    print("File uploaded successfully")
                     st.success(f'File {uploaded_image.name} is successfully saved at {save_path}')
                     
-                    # Generate description for the uploaded image
-                    generate_description(uploaded_image.name, style, title, caption)
                 else:
                     st.error('Error in submitting, please try again')
                     
         if submitted:    
             home.empty() 
             # TODO: A FUNCTION CALL -> call to function that takes in uploaded image at save_path and stores output image at some other path
-            show_output(uploaded_image, style, output_image_path)
+            show_output(save_path, style, title, caption, output_image_path)
 
 def generate_description(image_name, style, title, caption):
-    description_file_path = '/workspaces/streamlit-replicate-img-app/gallery/description.json'
+    description_file_path = 'temp_workspace/gallery/description.json'
     
     # Load existing descriptions if the file exists
     descriptions = {}
@@ -118,7 +116,7 @@ def generate_description(image_name, style, title, caption):
     with open(description_file_path, "w") as desc_file:
         json.dump(descriptions, desc_file, indent=4)
 
-def show_output(input_image_path, model_type, output_image_path):
+def show_output(input_image_path, model_type, title, caption, output_image_path):
     gallery.empty()
     home.empty()
   
@@ -137,19 +135,33 @@ def show_output(input_image_path, model_type, output_image_path):
         st.markdown("# :rainbow[Automating Visual Artistry]")
         
         # Define common inference parameters
+        checkpoint = None
+        checkpoint_name = None
+        if model_type == "Mosaic":
+            checkpoint = "SavageSanta25/johnson-mosaic"
+            checkpoint_name = "mosaic.pth"
+        elif model_type == "Starry Night":
+            checkpoint = "SavageSanta25/johnson-starrynight"
+            checkpoint_name = "vg_starry_night.pth"
+        elif model_type == "Wave Crop":
+            checkpoint = "SavageSanta25/johnson-wavecrop"
+            checkpoint_name = "wave_crop.pth"
+        elif model_type == "Giger Crop":
+            checkpoint = "SavageSanta25/johnson-gigercrop"
+            checkpoint_name = "giger_crop.pth"
+
         inference_config = dict()
         inference_config = {
-            'content_images_path': input_image_path,
             'output_images_path': output_image_path,
-            'model_binaries_path': None,
-            'content': input_image_path.name,
+            'content': input_image_path,
             'img_width': 500,
-            'checkpoint_name': None,
-            'should_not_display': False, # what is store_false in old nst_mosaic.py mean?
+            'checkpoint': checkpoint,
+            'checkpoint_name': checkpoint_name,
+            'redirected_output': None
         }
         
-        # Call the stylize_image function with the provided model type and inference parameters
         output_image_path = stylize_image(model_type, inference_config)
+        generate_description(output_image_path.name, model_type, title, caption)
         
         st.image(output_image_path, caption="Generated Image 🎈", use_column_width=True)
 
@@ -181,7 +193,7 @@ def show_gallery():
         st.markdown("""<div style="padding-bottom: 15px;"></div>""", unsafe_allow_html=True)
 
         # Read all descriptions from the description file
-        description_file_path = '/workspaces/streamlit-replicate-img-app/gallery/description.json'
+        description_file_path = 'temp_workspace/gallery/description.json'
         if os.path.exists(description_file_path):
             with open(description_file_path, "r") as desc_file:
                 descriptions = json.loads(desc_file.read())
@@ -189,7 +201,7 @@ def show_gallery():
             descriptions = {}
         
         # Display all images stored in the local folder
-        raw = '/workspaces/streamlit-replicate-img-app/gallery'
+        raw = 'temp_workspace/gallery'
         paths = [(file_path, file_path.stat().st_mtime) for file_path in Path(raw).iterdir()
                  if file_path.suffix.lower() in ['.jpg', '.jpeg', '.png']]
         sorted_image_paths = sorted(paths, key=lambda x: x[1], reverse=True)
@@ -206,13 +218,14 @@ def show_gallery():
 
                     image_name = Path(image_path).name
 
-                    print("ÏN", image_path)
-
                     # Check if the image_name exists in the descriptions dictionary
                     if image_name in descriptions:
                         model_name = descriptions[image_name].get("model_name", "")
                         art_title = descriptions[image_name].get("art_title", "")
                         description = descriptions[image_name].get("description", "")
+                        print(model_name)
+                        print(art_title)
+                        print(description)
                     else:
                         model_name = ""
                         art_title = ""
@@ -238,7 +251,7 @@ def show_gallery():
 def main():
     submitted = False
 
-    output_image_path = '/workspaces/streamlit-replicate-img-app/gallery'
+    output_image_path = 'temp_workspace/gallery'
     page = st.sidebar.radio("Navigation", ("Home", "Gallery"))
 
     if page == "Home":
