@@ -18,5 +18,20 @@
         "model_name": "Picasso",
         "art_title": "Sea Foam",
         "description": "Turbulent Waters"
+    },
+    "CityScape.jpg": {
+        "model_name": "GAN-1",
+        "art_title": "CityScape",
+        "description": "a city landscape"
+    },
+    "Mountain.jpg": {
+        "model_name": "GAN-3",
+        "art_title": "Mountain",
+        "description": "Mountain Landscape"
+    },
+    "DeepSpace.jpg": {
+        "model_name": "Combined-GAN",
+        "art_title": "DeepSpace",
+        "description": "Combined deepspace"
     }
 }
