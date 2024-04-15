@@ -172,15 +172,15 @@ def show_output(input_image_path, model_type, title, caption, output_image_path,
         if model_type=="GAN-1" or model_type=="GAN-2" or model_type=="GAN-3" or model_type=="GAN-4" or model_type=="Combined-GAN":
             output_path  = None
             if model_type == "GAN-1":
-                output_image = gans.get_gan_prediction(input_image_path, "generator_block5_conv1.onnx")
+                output_image = gans.get_gan_prediction(input_image_path, "block3conv2.onnx") 
             if model_type == "GAN-2":
-                output_image = gans.get_gan_prediction(input_image_path, "generator_block5_conv2.onnx")
+                output_image = gans.get_gan_prediction(input_image_path, "block3conv3.onnx") 
             if model_type == "GAN-3":
-                output_image = gans.get_gan_prediction(input_image_path, "generator_block5_conv3.onnx")
+                output_image = gans.get_gan_prediction(input_image_path, "block5conv4.onnx") 
             if model_type == "GAN-4":
-                output_image =gans.get_gan_prediction(input_image_path, "generator_block5_conv4.onnx")
+                output_image =gans.get_gan_prediction(input_image_path, "block5conv3.onnx")
             if model_type == "Combined-GAN":
-                output_image = gans.combine_images_random_block(input_image_path, block_size=4)
+                output_image = gans.combine_images_random_block(input_image_path, block_size=2)
 
             #io.imsave(output_image_path, output_image)
             #os.makedirs(output_image_path, exist_ok=True)

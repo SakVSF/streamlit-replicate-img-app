@@ -58,5 +58,55 @@
         "model_name": "GAN-2",
         "art_title": "GAN_city",
         "description": "My first painting"
+    },
+    "dessert_model_GAN-1.jpg": {
+        "model_name": "GAN-1",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "dessert_model_johnson-mosaic.jpg": {
+        "model_name": "Mosaic",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "dessert_model_GAN-2.jpg": {
+        "model_name": "GAN-2",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "dessert_model_GAN-3.jpg": {
+        "model_name": "GAN-3",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "dessert_model_GAN-4.jpg": {
+        "model_name": "GAN-4",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "mountain_model_GAN-1.jpg": {
+        "model_name": "GAN-1",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "mountain_model_GAN-2.jpg": {
+        "model_name": "GAN-2",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "mountain_model_GAN-3.jpg": {
+        "model_name": "GAN-3",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "dessert_model_Combined-GAN.jpg": {
+        "model_name": "Combined-GAN",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "mountain_model_Combined-GAN.jpg": {
+        "model_name": "Combined-GAN",
+        "art_title": "Untitled",
+        "description": "My first painting"
     }
 }
