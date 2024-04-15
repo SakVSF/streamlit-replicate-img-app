@@ -5,7 +5,7 @@ from pathlib import Path
 import json
 import os
 import PIL as pil
-#import nst_mosaic
+import nst_mosaic
 import gans
 from skimage import io
 # import nst_vangogh
@@ -32,11 +32,7 @@ def stylize_image(model_type, inference_config):
         'Starry Night': nst_mosaic.stylize_static_image,
         'Wave Crop': nst_mosaic.stylize_static_image,
         'Giger Crop': nst_mosaic.stylize_static_image,
-        # 'GAN-1': gan_1.stylize_static_image,
-        # 'GAN-2': gan_2.stylize_static_image,
-        # 'GAN-3': gan_3.stylize_static_image,
-        # 'GAN-4': gan_4.stylize_static_image,
-        # 'GAN-5': gan_5.stylize_static_image,  
+        
     }
     
     # Check if the model type is valid
@@ -102,7 +98,7 @@ def show_home(submitted, output_image_path):
             # TODO: A FUNCTION CALL -> call to function that takes in uploaded image at save_path and stores output image at some other path
             
 
-            show_output(save_path, style, title, caption, output_image_path)
+            show_output(save_path, style, title, caption, output_image_path, uploaded_image.name)
 
 def generate_description(image_name, style, title, caption):
     description_file_path = 'gallery/description.json'
@@ -120,7 +116,7 @@ def generate_description(image_name, style, title, caption):
     with open(description_file_path, "w") as desc_file:
         json.dump(descriptions, desc_file, indent=4)
 
-def show_output(input_image_path, model_type, title, caption, output_image_path):
+def show_output(input_image_path, model_type, title, caption, output_image_path, uploaded_image_name):
     gallery.empty()
     home.empty()
   
@@ -137,7 +133,7 @@ def show_output(input_image_path, model_type, title, caption, output_image_path)
          unsafe_allow_html=True
      )
         st.markdown("# :rainbow[Automating Visual Artistry]")
-        '''
+        
         #Aditi's Models 
         if model_type=="Mosaic" or model_type=="Starry Night" or model_type=="Wave Crop" or model_type=="Giger Crop":
             # Define common inference parameters
@@ -166,8 +162,12 @@ def show_output(input_image_path, model_type, title, caption, output_image_path)
                 'redirected_output': None
             }
             
-            #output_image_path = 
-            stylize_image(model_type, inference_config)'''
+            output_image_path = stylize_image(model_type, inference_config)
+            output_generate = output_image_path.split("\\")[1]
+            generate_description(output_generate, model_type, title, caption)
+            print(output_image_path)
+            st.image(output_image_path, caption="Generated Image 🎈", use_column_width=True)
+
         #Swastik's Models 
         if model_type=="GAN-1" or model_type=="GAN-2" or model_type=="GAN-3" or model_type=="GAN-4" or model_type=="Combined-GAN":
             output_path  = None
@@ -187,14 +187,20 @@ def show_output(input_image_path, model_type, title, caption, output_image_path)
             print("output_image_path", output_image_path)
             # Save the image to the specified folder
             # Concatenate output_image_path, title, and ".jpg" extension
-            image_path = os.path.join(output_image_path, f"{title}.jpg")
+            #image_path = os.path.join(output_image_path, f"{title}.jpg")
+            uploaded_image_name_without_extension = os.path.splitext(uploaded_image_name)[0]
+
+            # Construct the new image path with the desired naming convention
+            image_name = f"{uploaded_image_name_without_extension}_model_{model_type}.jpg"
+            image_path = os.path.join(output_image_path, image_name)
+
 
             # Save the image
             io.imsave(image_path, output_image)
             print(f"Image saved successfully at: {image_path}")
 
 
-            generate_description(f"{title}.jpg", model_type, title, caption)
+            generate_description(image_name, model_type, title, caption)
         
             st.image(image_path, caption="Generated Image 🎈", use_column_width=True)
 
