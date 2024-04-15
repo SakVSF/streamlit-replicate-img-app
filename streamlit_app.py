@@ -4,7 +4,8 @@ from streamlit_image_select import image_select
 from pathlib import Path
 import json
 import os
-import nst_mosaic
+import PIL as pil
+#import nst_mosaic
 import gans
 from skimage import io
 # import nst_vangogh
@@ -14,22 +15,6 @@ from skimage import io
 # import gan_3
 # import gan_4
 # import gan_5
-from PIL import Image
-
-def resize_image(image, target_size=(512, 512)):
-    """
-    Resize the input image to the target size.
-
-    Args:
-    - image: PIL image object
-    - target_size: Tuple specifying the target size (width, height)
-
-    Returns:
-    - resized_image: Resized PIL image object
-    """
-    resized_image = image.resize(target_size, Image.ANTIALIAS)
-    return resized_image
-
 
 # UI configurations
 st.set_page_config(page_title="Neural Style Transfer",
@@ -93,12 +78,6 @@ def show_home(submitted, output_image_path):
                 caption = st.text_input("Write a unique caption", value="My first painting")
                 
             uploaded_image = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
-            # Convert the uploaded image data to a PIL image object
-            pil_image = Image.open(uploaded_image)
-
-            # Resize the image to 512x512
-            uploaded_image = resize_image(pil_image)
-
             submitted = st.form_submit_button("Submit", type="primary", use_container_width=True)
             save_path = None
             if submitted:
@@ -141,9 +120,6 @@ def generate_description(image_name, style, title, caption):
     with open(description_file_path, "w") as desc_file:
         json.dump(descriptions, desc_file, indent=4)
 
-
-
-
 def show_output(input_image_path, model_type, title, caption, output_image_path):
     gallery.empty()
     home.empty()
@@ -161,10 +137,9 @@ def show_output(input_image_path, model_type, title, caption, output_image_path)
          unsafe_allow_html=True
      )
         st.markdown("# :rainbow[Automating Visual Artistry]")
-        
+        '''
         #Aditi's Models 
         if model_type=="Mosaic" or model_type=="Starry Night" or model_type=="Wave Crop" or model_type=="Giger Crop":
-           
             # Define common inference parameters
             checkpoint = None
             checkpoint_name = None
@@ -185,17 +160,14 @@ def show_output(input_image_path, model_type, title, caption, output_image_path)
             inference_config = {
                 'output_images_path': output_image_path,
                 'content': input_image_path,
-                'img_width': 512,
+                'img_width': 500,
                 'checkpoint': checkpoint,
                 'checkpoint_name': checkpoint_name,
                 'redirected_output': None
             }
             
-            output_image_path = stylize_image(model_type, inference_config)
-            generate_description(output_image_path.name, model_type, title, caption)
-        
-            st.image(output_image_path, caption="Generated Image 🎈", use_column_width=True)
-
+            #output_image_path = 
+            stylize_image(model_type, inference_config)'''
         #Swastik's Models 
         if model_type=="GAN-1" or model_type=="GAN-2" or model_type=="GAN-3" or model_type=="GAN-4" or model_type=="Combined-GAN":
             output_path  = None
@@ -225,9 +197,6 @@ def show_output(input_image_path, model_type, title, caption, output_image_path)
             generate_description(f"{title}.jpg", model_type, title, caption)
         
             st.image(image_path, caption="Generated Image 🎈", use_column_width=True)
-
-
-            
 
 def show_gallery():
     gen_image.empty()

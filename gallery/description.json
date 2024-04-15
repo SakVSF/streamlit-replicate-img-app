@@ -33,5 +33,15 @@
         "model_name": "Combined-GAN",
         "art_title": "DeepSpace",
         "description": "Combined deepspace"
+    },
+    "Untitled.jpg": {
+        "model_name": "GAN-1",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "Moon.jpg": {
+        "model_name": "GAN-2",
+        "art_title": "Moon",
+        "description": "Night sky"
     }
 }
