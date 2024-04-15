@@ -78,5 +78,25 @@
         "model_name": "Wave Crop",
         "art_title": "Untitled",
         "description": "My first painting"
+    },
+    "lion_model_johnson-gigercrop.jpg": {
+        "model_name": "Giger Crop",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "bridge_model_johnson-starrynight.jpg": {
+        "model_name": "Starry Night",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "mountain_model_johnson-gigercrop.jpg": {
+        "model_name": "Giger Crop",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "bridge_model_johnson-gigercrop.jpg": {
+        "model_name": "Giger Crop",
+        "art_title": "Untitled",
+        "description": "My first painting"
     }
 }

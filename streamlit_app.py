@@ -4,10 +4,11 @@ from streamlit_image_select import image_select
 from pathlib import Path
 import json
 import os
-import PIL as pil
+from PIL import Image
 import nst_mosaic
 import gans
-from skimage import io
+from skimage import io, transform
+import numpy as np
 # import nst_vangogh
 # import nst_picasso
 # import gan_1
@@ -84,10 +85,26 @@ def show_home(submitted, output_image_path):
                 os.makedirs(raw, exist_ok=True)
                 
                 if uploaded_image is not None:
-                    save_path = Path(raw, uploaded_image.name)
-                    with open(save_path, "wb") as f:
-                        f.write(uploaded_image.getvalue())
-                    print("File uploaded successfully")
+
+                    img = io.imread(uploaded_image)
+
+                    if img.shape[-1] == 4:
+                        img = img[..., :3]  # Remove alpha channel
+
+                    # Resize the image to 512x512
+                    img_resized = transform.resize(img, (512, 512))
+
+                    # Convert the image to uint8 data type (required by skimage)
+                    img_resized_uint8 = (img_resized * 255).astype(np.uint8)
+
+                    # Save the resized image to a temporary directory
+                    save_path= Path(raw, uploaded_image.name)
+                    io.imsave(save_path, img_resized_uint8)
+
+                    #save_path = Path(raw, uploaded_image.name)
+                    #with open(save_path, "wb") as f:
+                    #    f.write(uploaded_image.getvalue())
+                    #print("File uploaded successfully")
                     st.success(f'File {uploaded_image.name} is successfully saved at {save_path}')
                     
                 else:
