@@ -4,7 +4,6 @@ import utils.image_utils as image_utils
 def build_loss(model, image_input, target_representations, content_feature_maps_index, style_feature_maps_indices, config):
     alpha = config['content_weight']
     beta = config['style_weight']
-    gamma = config['tv_weight']
 
     target_content_representation = target_representations[0]
     target_style_representation = target_representations[1]
@@ -31,6 +30,6 @@ def build_loss(model, image_input, target_representations, content_feature_maps_
     tv_loss = image_utils.total_variation(image_input)
 
     # nst loss calculation
-    total_loss = alpha * content_loss + beta * average_style_loss + gamma * tv_loss
+    total_loss = alpha * content_loss + beta * average_style_loss
 
-    return total_loss, content_loss, style_loss, tv_loss
+    return total_loss, content_loss, style_loss

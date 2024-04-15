@@ -58,5 +58,25 @@
         "model_name": "GAN-2",
         "art_title": "GAN_city",
         "description": "My first painting"
+    },
+    "green_bridge_model_johnson-mosaic.jpg": {
+        "model_name": "Mosaic",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "golden_gate_model_GAN-2.jpg": {
+        "model_name": "GAN-2",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "sutd_model_GAN-2.jpg": {
+        "model_name": "GAN-2",
+        "art_title": "Untitledasd",
+        "description": "My first paintingasd"
+    },
+    "golden_gate_model_johnson-wavecrop.jpg": {
+        "model_name": "Wave Crop",
+        "art_title": "Untitled",
+        "description": "My first painting"
     }
 }

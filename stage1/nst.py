@@ -17,6 +17,7 @@ def neural_style_transfer(config):
     style_image_name = os.path.split(style_img_path)[1].split('.')[0]
     out_dir_name = 'combined_' + content_image_name + '_' + style_image_name
     result_path = os.path.join(config['output_img_dir'], out_dir_name)
+    print(result_path)
     os.makedirs(result_path, exist_ok=True)
 
     # setup GPU for inference
@@ -47,13 +48,13 @@ def neural_style_transfer(config):
     
     lbfgs_optimize(model, starting_img, target_representations, content_feature_maps_index_name, style_feature_maps_indices_names, config, result_path, num_of_iterations)
 
+    utils.save_and_image(starting_img, dump_path, config, cnt, num_of_iterations[config['optimizer']], should_display=False)
     return result_path
 
 
 if __name__ == "__main__":
-    # default args
-    img_format = (4, '.jpg')  # saves images in the format: %04d.jpg
 
+    img_format = (4, '.jpg')  # saves images in the format: %04d.jpg
     current_dir = os.path.dirname(__file__)
     parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
     content_images_dir = os.path.join(parent_dir, 'data', 'content-images')
@@ -62,8 +63,8 @@ if __name__ == "__main__":
 
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--content", type=str, help="content image name", default='lion.jpg')
-    parser.add_argument("--style", type=str, help="style image name", default='ben_giles.jpg')
+    parser.add_argument("--content", type=str, help="content image name", default='taj_mahal.jpg')
+    parser.add_argument("--style", type=str, help="style image name", default='mosaic.jpg')
     args = parser.parse_args()
 
     nst_config = dict()
@@ -72,9 +73,8 @@ if __name__ == "__main__":
         'height': 400,
         'content_weight': 100000.0,
         'style_weight': 30000.0,
-        'tv_weight': 1.0,
         'optimizer': 'lbfgs',
-        'iterations': 1000,
+        'iterations': 100,
         'model': 'vgg19',
         'saving_freq': -1
     }
@@ -86,5 +86,3 @@ if __name__ == "__main__":
     nst_config['img_format'] = img_format
 
     results_path = neural_style_transfer(nst_config)
-
-    create_viz_video(results_path, img_format)

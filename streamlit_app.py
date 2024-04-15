@@ -287,16 +287,129 @@ def show_gallery():
             # Display a message if no images are found in the gallery folder
             st.write("No images available in the gallery.")
 
+def show_video_home(submitted, output_image_path):
+    gen_image.empty()
+    gallery.empty()
+    submitted = False
+    
+    with home.container():
+        st.markdown(
+         f"""
+         <style>
+         .stApp {{
+             background: url("https://static.vecteezy.com/system/resources/previews/023/900/029/non_2x/abstract-colorful-watercolor-background-watercolor-texture-digital-art-painting-illustration-hand-painted-watercolor-abstract-morning-light-wallpaper-it-is-a-hand-drawn-vector.jpg");
+             background-size: cover
+         }}
+         </style>
+         """,
+         unsafe_allow_html=True
+     )
+        st.markdown("# :rainbow[Automating Visual Artistry]")
+        
+        with st.form("my_form"):
+            
+            st.info("**Hello! Bring out your inner Picasso here ↓**", icon="👋🏾")
+            with st.expander("**Choose your model**"):
+                style = st.selectbox('Style', ('Mosaic', 'Starry Night', 'Candy'))
+                
+            uploaded_image = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png", "mp4"])
+            submitted = st.form_submit_button("Submit", type="primary", use_container_width=True)
+            save_path = None
+            if submitted:
+                print(submitted)
+                # Save the uploaded file to a temporary directory
+                raw = 'temp_workspace/streamlit-replicate-img-app/raw'
+                # Ensure the folder exists, if not create it
+                os.makedirs(raw, exist_ok=True)
+                
+                if uploaded_image is not None:
+                    save_path = Path(raw, uploaded_image.name)
+                    with open(save_path, "wb") as f:
+                        f.write(uploaded_image.getvalue())
+                    print("File uploaded successfully")
+                    st.success(f'File {uploaded_image.name} is successfully saved at {save_path}')
+                    
+                else:
+                    st.error('Error in submitting, please try again')
+                    
+        if submitted:    
+            home.empty() 
+            # TODO: A FUNCTION CALL -> call to function that takes in uploaded image at save_path and stores output image at some other path
+            show_video_output(save_path, style, output_image_path)
+
+
+def show_video_output(input_image_path, model_type, output_image_path):
+    gallery.empty()
+    home.empty()
+  
+    with gen_image.container():
+        st.markdown(
+         f"""
+         <style>
+         .stApp {{
+             background: url("https://t3.ftcdn.net/jpg/06/27/85/70/360_F_627857047_VDETCsSfRkZuo5Fzdy3eHL1ZGdhsqYv9.jpg");
+             background-size: cover
+         }}
+         </style>
+         """,
+         unsafe_allow_html=True
+     )
+        st.markdown("# :rainbow[Automating Visual Artistry]")
+        
+        # Define common inference parameters
+        checkpoint = None
+        checkpoint_name = None
+        req_style = None
+        if model_type == "Mosaic":
+            checkpoint_name = "mosaic.pth"
+            req_style = "mosaic"
+        elif model_type == "Starry Night":
+            checkpoint_name = "vg_starry_night.pth"
+            req_style = "vg_starry_night"
+        elif model_type == "Candy":
+            checkpoint_name = "candy.pth"
+            req_style = "candy"
+
+
+        import subprocess
+
+        # Assuming the video.py script is in the same directory as the current script
+        script_path = './video_nst/video.py'
+
+        # Example command with arguments
+        command = ['python', script_path, '--specific_videos', input_image_path, '--model_name', checkpoint_name]
+
+        file_path = str(input_image_path)
+        file_name = file_path.split('\\')[-1]  # Split the file path by '\' and get the last element
+        video_name = file_name.split('.')[0]  # Split the file name by '.' and get the first element
+
+        # Execute the command
+        subprocess.run(command)
+
+        print("Video NST fully completed")
+        
+        video_dir = f"stage3\data\clip_{video_name}\{req_style}\stylized.mp4"
+
+        video_file = open(video_dir, 'rb') #enter the filename with filepath
+        print("video file successfully opened")
+
+        video_bytes = video_file.read() #reading the file
+        print("video file successfully read")
+
+        st.video(video_bytes) #displaying the video
+
 def main():
     submitted = False
 
     output_image_path = 'gallery'
-    page = st.sidebar.radio("Navigation", ("Home", "Gallery"))
+    page = st.sidebar.radio("Navigation", ("Image NST", "Video NST", "Image Gallery"))
 
-    if page == "Home":
+    if page == "Image NST":
         show_home(submitted, output_image_path)
-    elif page == "Gallery":
+    elif page == "Image Gallery":
         show_gallery()
+    elif page == "Video NST":
+        show_video_home(submitted, output_image_path)
 
 if __name__ == "__main__":
     main()

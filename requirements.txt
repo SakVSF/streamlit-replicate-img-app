@@ -4,7 +4,7 @@ streamlit-image-select
 streamlit-card==1.0.0
 numpy==1.26.4
 onnxruntime==1.17.3
-scikit-image==0.23.1
+scikit-image
 torch==2.2.2
 opencv-python==4.9.0.80
 huggingface-hub==0.22.2

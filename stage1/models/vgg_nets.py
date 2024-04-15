@@ -3,7 +3,7 @@ import torch
 from torchvision import models
 
 class Vgg19(torch.nn.Module):
-    def __init__(self, requires_grad=False, show_progress=False, use_relu=True):
+    def __init__(self, requires_grad=False, show_progress=False, use_relu=False):
         super().__init__()
         vgg_pretrained_features = models.vgg19(pretrained=True, progress=show_progress).features
         if use_relu:  # use relu or as in original paper conv layers
@@ -12,8 +12,8 @@ class Vgg19(torch.nn.Module):
         else:
             self.layer_names = ['conv1_1', 'conv2_1', 'conv3_1', 'conv4_1', 'conv4_2', 'conv5_1']
             self.offset = 0
-            
-        self.content_feature_maps_index = 1  # 1 means we are using relu2_1, 4 means conv_4_2
+                
+        self.content_feature_maps_index = 4  # 1 means we are using relu2_1, 4 means conv_4_2
         # all layers used for style representation except conv4_2
         self.style_feature_maps_indices = list(range(len(self.layer_names)))
         self.style_feature_maps_indices.remove(4)  # conv4_2
