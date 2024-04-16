@@ -53,3 +53,11 @@ Make sure you have run the setup instructions from `Stage 1`.
 2. Make sure these 4 filenames exist in your root directory `block3conv2.onnx`,`block3conv3.onnx`, `block5conv3.onnx`, `block5conv4.onnx`
 3. These are your 4 models and will be used for inferencing
 4. Look in the `gallery` directory to find your stylised images after inference is complete.
+
+
+## Running the Streamlit Application
+
+Make sure you are in the root directory `\streamlit-replicate-img-app` and have `streamlit` installed
+
+Run `streamlit run streamlit_app.py --server.enableXsrfProtection false`. The streamlit applicated should run on your localhost. 
+
