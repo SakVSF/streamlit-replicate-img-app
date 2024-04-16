@@ -53,13 +53,13 @@ def get_gan_prediction(input_path, model_path):
 #get_gan_prediction("input_path", "generator_block5_conv2.onnx")
 
 
-def combine_images_random_block(input_path, block_size=4):
-    
 
-    image1 = get_gan_prediction(input_path, "generator_block5_conv1.onnx")
-    image2 = get_gan_prediction(input_path, "generator_block5_conv2.onnx")
-    image3 = get_gan_prediction(input_path, "generator_block5_conv3.onnx")
-    image4 = get_gan_prediction(input_path, "generator_block5_conv4.onnx")
+def combine_images_random_block(input_path, block_size=4):
+
+    image1 = get_gan_prediction(input_path, "block3conv2.onnx")
+    image2 = get_gan_prediction(input_path, "block3conv3.onnx")
+    image3 = get_gan_prediction(input_path, "block5conv4.onnx")
+    image4 = get_gan_prediction(input_path, "block5conv3.onnx")
     
     # Load images and normalize
     images = np.array([image1,image2,image3,image4])

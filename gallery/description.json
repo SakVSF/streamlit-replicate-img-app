@@ -98,5 +98,25 @@
         "model_name": "Giger Crop",
         "art_title": "Untitled",
         "description": "My first painting"
+    },
+    "dessert_model_GAN-1.jpg": {
+        "model_name": "GAN-1",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "dessert_model_GAN-2.jpg": {
+        "model_name": "GAN-2",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "dessert_model_Combined-GAN.jpg": {
+        "model_name": "Combined-GAN",
+        "art_title": "Untitled",
+        "description": "My first painting"
+    },
+    "dessert_model_GAN-3.jpg": {
+        "model_name": "GAN-3",
+        "art_title": "Untitled",
+        "description": "My first painting"
     }
 }
