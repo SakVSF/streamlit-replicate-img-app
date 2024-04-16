@@ -23,11 +23,8 @@ def build_loss(model, image_input, target_representations, content_feature_maps_
             current_style_representation.append(required_gram_matrix)
 
     for target_gram_matrix, current_gram_matrix in zip(target_style_representation, current_style_representation):
-        style_loss += torch.nn.MSELoss(reduction='sum')(target_gram_matrix[0], current_gram_matrix[0])
-    average_style_loss = style_loss/len(target_style_representation)
-
-    # regulatization
-    tv_loss = image_utils.total_variation(image_input)
+        style_loss += torch.nn.MSELoss(reduction='sum')(target_gram_matrix[0], current_gram_matrix[0]) # pixel wise MSE loss!
+    average_style_loss = style_loss/len(target_style_representation) ## we average the style loss across all the representations
 
     # nst loss calculation
     total_loss = alpha * content_loss + beta * average_style_loss

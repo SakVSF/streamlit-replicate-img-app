@@ -17,7 +17,7 @@ def lbfgs_optimize(neural_net, optimizing_img, target_representations, content_f
             total_loss.backward()
         with torch.no_grad():
             print(f'iteration: {cnt:03}, total loss={total_loss}, content_loss={config["content_weight"] * content_loss}, style loss={config["style_weight"] * style_loss}')
-
+            image_utils.save_iteration_output(optimizing_img, dump_path, config, cnt, num_of_iterations)
         cnt += 1
         return total_loss
 
