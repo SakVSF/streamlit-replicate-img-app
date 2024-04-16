@@ -151,7 +151,7 @@ def show_output(input_image_path, model_type, title, caption, output_image_path,
      )
         st.markdown("# :rainbow[Automating Visual Artistry]")
         
-        #Aditi's Models 
+        #Stage 1 and 2 
         if model_type=="Mosaic" or model_type=="Starry Night" or model_type=="Wave Crop" or model_type=="Giger Crop":
             # Define common inference parameters
             checkpoint = None
@@ -187,7 +187,7 @@ def show_output(input_image_path, model_type, title, caption, output_image_path,
 
 
 
-        #Swastik's Models 
+        #Stage 3  
         if model_type=="GAN-1" or model_type=="GAN-2" or model_type=="GAN-3" or model_type=="GAN-4" or model_type=="Combined-GAN":
             output_path  = None
             if model_type == "GAN-1":
