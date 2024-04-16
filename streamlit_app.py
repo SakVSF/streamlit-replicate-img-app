@@ -407,7 +407,7 @@ def show_video_output(input_image_path, model_type, output_image_path):
 
         print("Video NST fully completed")
         
-        video_dir = f"stage3\data\clip_{video_name}\{req_style}\stylized.mp4"
+        video_dir = f"video_nst\data\clip_{video_name}\{req_style}\stylized.mp4"
 
         video_file = open(video_dir, 'rb') #enter the filename with filepath
         print("video file successfully opened")
