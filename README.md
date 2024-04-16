@@ -62,4 +62,4 @@ Make sure you are in the root directory `\streamlit-replicate-img-app` and have 
 Run `streamlit run streamlit_app.py --server.enableXsrfProtection false`. The streamlit applicated should run on your localhost. 
 
 
-We DO NOT TAKE ANY CREDIT for the pytorch-naive-video-neural-style-transfer library (used in the `video_nst` folder). All credit goes to the original creator.
+We fully acknowledge that the pytorch-naive-video-neural-style-transfer library utilized in the video_nst folder is not of our creation. All credit and recognition belong to the original creator.
