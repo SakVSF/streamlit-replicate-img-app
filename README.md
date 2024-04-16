@@ -1,6 +1,6 @@
 # Neural Style Transfer
 
-This project has 3 different implementations of Neural Style Transfer, divided into Stage 1, Stage 2 and Stage 3. More details to come.
+This project has 3 different implementations of Neural Style Transfer, divided into Stage 1, Stage 2 and Stage 3. The code for the streamlit application is in `streamlit_app.py` and implements different models based on user's selection. 
 
 ## Stage 1
 
