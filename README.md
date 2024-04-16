@@ -57,7 +57,7 @@ Make sure you have run the setup instructions from `Stage 1`.
 
 ## Running the Streamlit Application
 
-Make sure you are in the root directory `\streamlit-replicate-img-app' and have `streamlit` installed
+Make sure you are in the root directory `\streamlit-replicate-img-app` and have `streamlit` installed
 
 Run `streamlit run streamlit_app.py --server.enableXsrfProtection false`. The streamlit applicated should run on your localhost. 
 
