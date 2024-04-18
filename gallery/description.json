@@ -1,122 +1,52 @@
 {
-    "landscape.jpg": {
-        "model_name": "VanGogh",
-        "art_title": "Watercolor",
-        "description": "Variation landscape"
-    },
-    "70s.png": {
+    "city_model_johnson-mosaic.jpg": {
         "model_name": "Mosaic",
-        "art_title": "70s Abstract",
-        "description": ""
-    },
-    "Ben Lewis Giles.png": {
-        "model_name": "GAN-2",
-        "art_title": "Ben Lewis Giles",
-        "description": "Mixed Collage"
-    },
-    "sea.jpg": {
-        "model_name": "Picasso",
-        "art_title": "Sea Foam",
-        "description": "Turbulent Waters"
-    },
-    "CityScape.jpg": {
-        "model_name": "GAN-1",
-        "art_title": "CityScape",
-        "description": "a city landscape"
-    },
-    "Mountain.jpg": {
-        "model_name": "GAN-3",
-        "art_title": "Mountain",
-        "description": "Mountain Landscape"
-    },
-    "DeepSpace.jpg": {
-        "model_name": "Combined-GAN",
-        "art_title": "DeepSpace",
-        "description": "Combined deepspace"
-    },
-    "Moon.jpg": {
-        "model_name": "GAN-2",
-        "art_title": "Moon",
-        "description": "Night sky"
+        "art_title": "City Scape ",
+        "description": "My first cityscape painting"
     },
     "moon_model_johnson-starrynight.jpg": {
         "model_name": "Starry Night",
-        "art_title": "Untitled",
-        "description": "My first painting"
+        "art_title": "Starry Moon",
+        "description": "A starry night sky "
     },
-    "moon_model_johnson-wavecrop.jpg": {
+    "bridge_model_johnson-wavecrop.jpg": {
         "model_name": "Wave Crop",
-        "art_title": "Untitled",
-        "description": "My first painting"
-    },
-    "cityscape_model_johnson-mosaic.jpg": {
-        "model_name": "Mosaic",
-        "art_title": "Untitled",
-        "description": "My first painting"
-    },
-    "city_model_GAN-2.jpg": {
-        "model_name": "GAN-2",
-        "art_title": "GAN_city",
-        "description": "My first painting"
-    },
-    "green_bridge_model_johnson-mosaic.jpg": {
-        "model_name": "Mosaic",
-        "art_title": "Untitled",
-        "description": "My first painting"
-    },
-    "golden_gate_model_GAN-2.jpg": {
-        "model_name": "GAN-2",
-        "art_title": "Untitled",
-        "description": "My first painting"
-    },
-    "sutd_model_GAN-2.jpg": {
-        "model_name": "GAN-2",
-        "art_title": "Untitledasd",
-        "description": "My first paintingasd"
-    },
-    "golden_gate_model_johnson-wavecrop.jpg": {
-        "model_name": "Wave Crop",
-        "art_title": "Untitled",
-        "description": "My first painting"
+        "art_title": "Golden Gate Bridge",
+        "description": "For my instagram story"
     },
     "lion_model_johnson-gigercrop.jpg": {
         "model_name": "Giger Crop",
-        "art_title": "Untitled",
-        "description": "My first painting"
+        "art_title": "Lion's Den",
+        "description": "A fierce close up shot"
     },
-    "bridge_model_johnson-starrynight.jpg": {
-        "model_name": "Starry Night",
-        "art_title": "Untitled",
-        "description": "My first painting"
-    },
-    "mountain_model_johnson-gigercrop.jpg": {
-        "model_name": "Giger Crop",
-        "art_title": "Untitled",
-        "description": "My first painting"
-    },
-    "bridge_model_johnson-gigercrop.jpg": {
-        "model_name": "Giger Crop",
-        "art_title": "Untitled",
-        "description": "My first painting"
-    },
-    "dessert_model_GAN-1.jpg": {
-        "model_name": "GAN-1",
-        "art_title": "Untitled",
-        "description": "My first painting"
-    },
-    "dessert_model_GAN-2.jpg": {
-        "model_name": "GAN-2",
-        "art_title": "Untitled",
-        "description": "My first painting"
-    },
-    "dessert_model_Combined-GAN.jpg": {
+    "deepspace_model_Combined-GAN.jpg": {
         "model_name": "Combined-GAN",
-        "art_title": "Untitled",
-        "description": "My first painting"
+        "art_title": "DeepSpace",
+        "description": "Pixelated deepspace"
     },
-    "dessert_model_GAN-3.jpg": {
+    "lion_model_GAN-1.jpg": {
+        "model_name": "GAN-1",
+        "art_title": "Lion's Stare",
+        "description": "Looking into your eyes"
+    },
+    "cityscape_model_GAN-2.jpg": {
+        "model_name": "GAN-2",
+        "art_title": "City View",
+        "description": "Serenity in the city"
+    },
+    "mountain_model_GAN-3.jpg": {
         "model_name": "GAN-3",
-        "art_title": "Untitled",
-        "description": "My first painting"
+        "art_title": "Mountain View",
+        "description": "At a height"
+    },
+    "bridge_model_GAN-4.jpg": {
+        "model_name": "GAN-4",
+        "art_title": "Another Bridge",
+        "description": "Crossing to the other end"
+    },
+    "cityscape_model_johnson-mosaic.jpg": {
+        "model_name": "Mosaic",
+        "art_title": "Colourful skies",
+        "description": "A beautiful view"
     }
 }
